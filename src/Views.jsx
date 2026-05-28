@@ -185,15 +185,18 @@ function ServiceCard({ svc, onChat, accent }) {
       {/* accent corner */}
       <div style={{ position: "absolute", top: 0, left: 0, width: 64, height: 2, background: accentColor }} />
 
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ display: "flex", gap: 14, alignItems: "flex-start", minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+        <div style={{ display: "flex", gap: 14, alignItems: "flex-start", minWidth: 0, flex: 1 }}>
           <span style={{
             width: 44, height: 44, borderRadius: 8, background: accentBg, color: accentColor,
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 22, letterSpacing: "-0.04em", flexShrink: 0,
           }}>{svc.provider.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
-          <div style={{ minWidth: 0 }}>
-            <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 15, color: "var(--fg-1)", letterSpacing: "-0.005em" }}>{svc.name}</h4>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+              <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 15, color: "var(--fg-1)", letterSpacing: "-0.005em" }}>{svc.name}</h4>
+              <VerifiedBadge size="sm" />
+            </div>
             <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span style={{ fontWeight: 500, color: "var(--fg-1)" }}>{svc.provider}</span>
               <span style={{ width: 3, height: 3, borderRadius: 999, background: "var(--fg-3)" }} />
@@ -201,7 +204,6 @@ function ServiceCard({ svc, onChat, accent }) {
             </div>
           </div>
         </div>
-        <VerifiedBadge size="sm" />
       </div>
 
       <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 13, lineHeight: 1.55, color: "var(--fg-2)" }}>{svc.desc}</p>
@@ -288,7 +290,7 @@ function EventRow({ ev, accent, onAttend, attending }) {
   if (mobile) {
     return (
       <div style={{
-        display: "grid", gridTemplateColumns: "64px 1fr", gap: 12, alignItems: "flex-start",
+        display: "grid", gridTemplateColumns: "68px 1fr", gap: 16, alignItems: "flex-start",
         background: "var(--bg-1)", border: "1px solid var(--hairline)",
         borderRadius: 12, padding: 14, transition: "all 220ms var(--ease-out)",
       }}>
