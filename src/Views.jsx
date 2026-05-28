@@ -97,9 +97,9 @@ function MarketCard({ item, onChat, onItem, accent, mobile }) {
         }}>
           <Icon name={saved ? "bookmark-check" : "bookmark"} size={14} />
         </button>
-        <div style={{ position: "absolute", bottom: 10, left: 12 }}>
+        {!mobile && <div style={{ position: "absolute", bottom: 10, left: 12 }}>
           <Badge tone="neutral" size="sm">{item.condition}</Badge>
-        </div>
+        </div>}
       </div>
       <div style={{ padding: mobile ? "10px 12px 12px" : "16px 18px 18px", display: "flex", flexDirection: "column", gap: mobile ? 8 : 12, flex: 1 }}>
         <div>
@@ -109,7 +109,9 @@ function MarketCard({ item, onChat, onItem, accent, mobile }) {
               {item.currency}{item.price}
             </div>
           </div>
-          {!mobile && <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 6, fontFamily: "var(--font-mono)" }}>{item.category}</div>}
+          <div style={{ fontSize: 10, color: "var(--fg-3)", marginTop: 4, fontFamily: "var(--font-mono)" }}>
+            {item.category}{mobile ? ` · ${item.condition}` : ""}
+          </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, marginTop: "auto", paddingTop: mobile ? 8 : 12, borderTop: "1px solid var(--hairline)" }}>
@@ -286,7 +288,7 @@ function EventRow({ ev, accent, onAttend, attending }) {
   if (mobile) {
     return (
       <div style={{
-        display: "grid", gridTemplateColumns: "64px 1fr", gap: 12, alignItems: "stretch",
+        display: "grid", gridTemplateColumns: "64px 1fr", gap: 12, alignItems: "flex-start",
         background: "var(--bg-1)", border: "1px solid var(--hairline)",
         borderRadius: 12, padding: 14, transition: "all 220ms var(--ease-out)",
       }}>

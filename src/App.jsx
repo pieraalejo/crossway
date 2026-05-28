@@ -277,7 +277,7 @@ function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend,
 function Footer({ accent, campus }) {
   const c = (window.CAMPUSES || []).find(x => x.id === campus);
   return (
-    <footer style={{ borderTop: "1px solid var(--hairline)", marginTop: 32, padding: "64px 48px 40px", maxWidth: 1440, margin: "32px auto 0" }}>
+    <footer className="cw-footer" style={{ borderTop: "1px solid var(--hairline)", marginTop: 32, padding: "64px 48px 40px", maxWidth: 1440, margin: "32px auto 0" }}>
       <div className="cw-footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }}>
         <div>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 56, lineHeight: 1, letterSpacing: "-0.03em", color: "var(--fg-1)" }}>

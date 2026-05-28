@@ -276,4 +276,8 @@ span[style*="font-style: italic"] { font-weight: 500 !important; }
 
   /* body bottom padding for bottom nav */
   #root > div { padding-bottom: 72px; }
+
+  /* footer */
+  .cw-footer { padding: 40px 20px 24px !important; }
+  .cw-footer-bottom { margin-top: 32px !important; }
 }

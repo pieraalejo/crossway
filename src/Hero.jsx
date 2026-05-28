@@ -156,7 +156,7 @@ function SearchBar({ query, setQuery, onSearch, accent }) {
         onChange={e => setQuery(e.target.value)}
         onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}
         onKeyDown={e => e.key === "Enter" && onSearch?.()}
-        placeholder="What do you need today? Try: desk, stats tutor, spring bash…"
+        placeholder={mobile ? "Search listings, services, events…" : "What do you need today? Try: desk, stats tutor, spring bash…"}
         style={{
           flex: 1, border: 0, outline: 0, background: "transparent",
           fontFamily: "var(--font-sans)", fontSize: 16, color: "var(--fg-1)",
@@ -169,7 +169,17 @@ function SearchBar({ query, setQuery, onSearch, accent }) {
             <span>⌘</span><span>K</span>
           </span>
         )}
-        <Btn size={mobile ? "sm" : "md"} onClick={onSearch}>Search</Btn>
+        {mobile ? (
+          <button onClick={onSearch} style={{
+            flexShrink: 0, width: 44, height: 44, borderRadius: 8, border: 0,
+            background: "var(--neon-lime)", color: "var(--carbon-black)", cursor: "pointer",
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <Icon name="search" size={18} stroke={2} />
+          </button>
+        ) : (
+          <Btn size="md" onClick={onSearch}>Search</Btn>
+        )}
       </div>
     </div>
   );
