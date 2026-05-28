@@ -59,7 +59,6 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
           <option value="high">Price: high to low</option>
         </select>}
       </div>
-      </div>
 
       <div className="cw-market-grid" style={{
         marginTop: 24, display: "grid",
