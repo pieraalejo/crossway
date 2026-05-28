@@ -1,0 +1,328 @@
+/* ============================================================
+   Módulo Design System — Colors & Type
+   Industrial Elegante · Dark Mode Premium · Minimalista
+   ============================================================ */
+
+/* ---------- Fonts ---------- */
+
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-Ultralight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-UltralightItalic.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-Ultrabold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-UltraboldItalic.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Manrope — body text. Loaded from Google Fonts. */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* ---------- Core palette ---------- */
+  --carbon-black:    #1a1919;  /* primary background */
+  --carbon-black-2:  #252525;  /* elevated surface, cards */
+  --carbon-black-3:  #2e2e2e;  /* hover / higher elevation */
+  --bone-white:      #f3f4ed;  /* primary foreground on dark */
+  --silver:          #a8a8a8;  /* secondary text, meta */
+  --silver-2:        #6e6e6e;  /* tertiary text, disabled */
+  --neon-lime:       #e9fc79;  /* signature accent */
+  --neon-lime-dim:   #c9dc5e;  /* accent hover / pressed */
+  --yale-blue:       #28456c;  /* secondary accent, links on light */
+  --yale-blue-2:     #1c324f;  /* yale pressed */
+
+  /* ---------- Hairlines & dividers ---------- */
+  --hairline:        rgba(243, 244, 237, 0.08);
+  --hairline-strong: rgba(243, 244, 237, 0.16);
+  --hairline-lime:   rgba(233, 252, 121, 0.24);
+
+  /* ---------- Accent tints (derived from --neon-lime) ---------- */
+  --accent-tint-xs:      rgba(233, 252, 121, 0.06);
+  --accent-tint-sm:      rgba(233, 252, 121, 0.08);
+  --accent-tint-md:      rgba(233, 252, 121, 0.10);
+  --accent-tint-edge-sm: rgba(233, 252, 121, 0.18);
+  --accent-tint-edge:    rgba(233, 252, 121, 0.30);
+  --accent-glow:         rgba(233, 252, 121, 0.30);
+
+  /* ---------- Info / secondary tints (derived from --yale-blue) ---------- */
+  --info-fg:               #9ec0eb;
+  --info-tint-xs:          rgba(40, 69, 108, 0.18);
+  --info-tint-sm:          rgba(40, 69, 108, 0.22);
+  --info-tint-md:          rgba(40, 69, 108, 0.18);
+  --info-tint-edge:        rgba(126, 158, 200, 0.20);
+  --info-tint-edge-strong: rgba(126, 158, 200, 0.32);
+
+  /* ---------- Success tints ---------- */
+  --success-fg:        #a9dd9c;
+  --success-tint-md:   rgba(141, 209, 122, 0.10);
+  --success-tint-edge: rgba(141, 209, 122, 0.30);
+
+  /* ---------- Semantic (dark theme, default) ---------- */
+  --bg-0:   var(--carbon-black);      /* page background */
+  --bg-1:   var(--carbon-black-2);    /* card / surface */
+  --bg-2:   var(--carbon-black-3);    /* hover / raised */
+  --bg-inverse: var(--bone-white);    /* inverted surface */
+
+  --fg-1:   var(--bone-white);        /* primary text */
+  --fg-2:   var(--silver);            /* secondary text */
+  --fg-3:   var(--silver-2);           /* tertiary / disabled */
+  --fg-inverse: var(--carbon-black);
+
+  --accent:          var(--neon-lime);
+  --accent-hover:    var(--neon-lime-dim);
+  --accent-fg:       var(--carbon-black);  /* text that sits on accent */
+
+  --link:            var(--neon-lime);
+  --link-hover:      var(--bone-white);
+
+  --border:          var(--hairline);
+  --border-strong:   var(--hairline-strong);
+  --focus-ring:      var(--neon-lime);
+
+  --success: #8dd17a;
+  --warning: #e9d37a;
+  --danger:  #e07a7a;
+  --info:    var(--yale-blue);
+
+  /* ---------- Typography families ---------- */
+  --font-display: "PP Editorial New", "Times New Roman", Times, serif;
+  --font-sans:    "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---------- Type scale (clamp for fluid sizing) ---------- */
+  --fs-display-xl: clamp(56px, 8vw, 128px);
+  --fs-display-lg: clamp(44px, 6vw, 88px);
+  --fs-display-md: clamp(36px, 4.5vw, 64px);
+  --fs-h1: clamp(32px, 3.2vw, 48px);
+  --fs-h2: clamp(26px, 2.4vw, 36px);
+  --fs-h3: 24px;
+  --fs-h4: 20px;
+  --fs-body-lg: 18px;
+  --fs-body:    16px;
+  --fs-body-sm: 14px;
+  --fs-caption: 12px;
+  --fs-eyebrow: 12px; /* uppercase meta */
+
+  --lh-tight:  1.05;
+  --lh-snug:   1.2;
+  --lh-normal: 1.5;
+  --lh-loose:  1.65;
+
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.08em;   /* for eyebrows, small caps */
+  --tracking-xwide:  0.18em;   /* for nav, badges */
+
+  /* ---------- Spacing ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ---------- Radii ---------- */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* ---------- Elevation / shadows ---------- */
+  --shadow-sm:  0 1px 0 rgba(0,0,0,0.4);
+  --shadow-md:  0 8px 24px rgba(0,0,0,0.35);
+  --shadow-lg:  0 24px 64px rgba(0,0,0,0.5);
+  --shadow-inset-hairline: inset 0 0 0 1px var(--hairline);
+  --shadow-glow-lime: 0 0 0 1px var(--hairline-lime), 0 0 24px rgba(233,252,121,0.18);
+
+  /* ---------- Motion ---------- */
+  --ease-out:      cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-emphasis: cubic-bezier(0.2, 0.9, 0.1, 1.1);
+  --dur-fast:   120ms;
+  --dur-base:   220ms;
+  --dur-slow:   400ms;
+}
+
+/* ============================================================
+   Semantic element styles — base reset + type roles
+   Consumers can opt in by adding class `.modulo-type`
+   on a root, or use the utility classes below.
+   ============================================================ */
+
+.modulo-type,
+.modulo-type * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.modulo-type {
+  background: var(--bg-0);
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--tracking-normal);
+}
+
+/* Display — Editorial New, tight tracking, trimmed leading */
+.modulo-type h1,
+.modulo-type .h1,
+h1.modulo {
+  font-family: var(--font-display);
+  font-weight: 200;         /* ultralight is the signature */
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+.modulo-type h2, .modulo-type .h2, h2.modulo {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+.modulo-type h3, .modulo-type .h3, h3.modulo {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.modulo-type h4, .modulo-type .h4, h4.modulo {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+.modulo-type p, p.modulo {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: var(--lh-loose);
+  color: var(--fg-2);
+  text-wrap: pretty;
+  margin: 0 0 1em 0;
+}
+
+.modulo-type small, .caption {
+  font-size: var(--fs-caption);
+  color: var(--fg-3);
+}
+
+/* The "eyebrow" — all-caps, wide-tracked label. Used everywhere. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-xwide);
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+
+/* Display utility — very large editorial headers */
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--fs-display-xl);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+.display-lg {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--fs-display-lg);
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+.display-md {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--fs-display-md);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* A common Módulo move: italic pulled in as rhetorical emphasis */
+.italic-accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 200;
+  color: var(--neon-lime);
+}
+
+/* Code / mono */
+.modulo-type code, code.modulo {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.4em;
+  color: var(--fg-1);
+}
+
+/* Links */
+.modulo-type a, a.modulo {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hairline-lime);
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.modulo-type a:hover, a.modulo:hover {
+  color: var(--link-hover);
+  border-color: var(--bone-white);
+}
+
+/* ---------- Light surface (rare, used for contrast slabs) ---------- */
+.modulo-type.bone,
+.modulo-surface-bone {
+  background: var(--bone-white);
+  color: var(--carbon-black);
+}
+.modulo-surface-bone p { color: #3a3a3a; }
+.modulo-surface-bone a { color: var(--yale-blue); border-bottom-color: rgba(40,69,108,0.3); }

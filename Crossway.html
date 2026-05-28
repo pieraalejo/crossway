@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Crossway · Student ecosystem</title>
+  <link rel="icon" type="image/svg+xml" href="assets/crossway-logo.svg" />
+  <link rel="stylesheet" href="styles/modulo.css" />
+  <link rel="stylesheet" href="styles/crossway.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    html, body { background: var(--bg-0); color: var(--fg-1); margin: 0; }
+    body { font-family: var(--font-sans); }
+
+    .cw-field-wrap input, .cw-field-wrap textarea, .cw-field-wrap select {
+      width: 100%; box-sizing: border-box;
+      background: var(--bg-1); border: 1px solid var(--hairline); border-radius: 6px;
+      color: var(--fg-1); font-family: var(--font-sans); font-size: 13px;
+      padding: 10px 12px; outline: 0; transition: border-color 120ms;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    @keyframes cwfade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cwslide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cwslideup { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    @keyframes cwslideright { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes cwpop { from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes cwbounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.6; } 30% { transform: translateY(-4px); opacity: 1; } }
+  </style>
+  <script>
+    window.__CW_ACCENT__  = "#00CDBA";
+    window.__CW_REBRAND__ = true;
+    const saved = localStorage.getItem("cw-theme");
+    if (saved === "light") document.documentElement.setAttribute("data-theme", "light");
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="src/data.jsx"></script>
+  <script type="text/babel" src="src/atoms.jsx"></script>
+  <script type="text/babel" src="src/Hero.jsx"></script>
+  <script type="text/babel" src="src/Views.jsx"></script>
+  <script type="text/babel" src="src/Overlays.jsx"></script>
+  <script type="text/babel" src="src/App.jsx"></script>
+</body>
+</html>

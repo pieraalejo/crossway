@@ -1,0 +1,230 @@
+/* ============================================================
+   Crossway Brand — Navy + Teal · Montserrat
+   Dark mode = default. Light mode = html[data-theme="light"].
+   Loaded on top of modulo.css to override theme tokens.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600&display=swap");
+
+/* ── Brand constants (never change with theme) ────────────── */
+:root {
+  --cw-navy:   #003077;
+  --cw-royal:  #075EDB;
+  --cw-deep:   #003F9E;
+  --cw-teal:   #00CDBA;
+  --cw-teal-2: #00B9A9;
+  --cw-blend:  #008B9F;
+  --cw-white:  #FFFFFF;
+
+  /* Typography */
+  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-brand:   "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --logo-weight:  600;
+  --logo-tracking: -0.005em;
+  --logo-transform: capitalize;
+}
+
+/* ── DARK MODE (default) ──────────────────────────────────── */
+:root {
+  --carbon-black:   #0D1B2E;
+  --carbon-black-2: #132338;
+  --carbon-black-3: #1A2F4A;
+  --bone-white:     #E8EEF8;
+  --silver:         #7A9CC4;
+  --silver-2:       #4A6896;
+  --neon-lime:      var(--cw-teal);
+  --neon-lime-dim:  var(--cw-teal-2);
+  --yale-blue:      var(--cw-royal);
+  --yale-blue-2:    var(--cw-deep);
+
+  --bg-0:       #0D1B2E;
+  --bg-1:       #132338;
+  --bg-2:       #1A2F4A;
+  --bg-inverse: #E8EEF8;
+
+  --fg-1:       #E8EEF8;
+  --fg-2:       #7A9CC4;
+  --fg-3:       #4A6896;
+  --fg-inverse: #0D1B2E;
+
+  --accent:       var(--cw-teal);
+  --accent-hover: var(--cw-teal-2);
+  --accent-fg:    #0D1B2E;
+
+  --link:       var(--cw-teal);
+  --link-hover: #E8EEF8;
+
+  --hairline:        rgba(0, 205, 186, 0.12);
+  --hairline-strong: rgba(0, 205, 186, 0.24);
+  --hairline-lime:   rgba(0, 205, 186, 0.30);
+  --border:          var(--hairline);
+  --border-strong:   var(--hairline-strong);
+  --focus-ring:      var(--cw-teal);
+
+  --accent-tint-xs:      rgba(0, 205, 186, 0.06);
+  --accent-tint-sm:      rgba(0, 205, 186, 0.10);
+  --accent-tint-md:      rgba(0, 205, 186, 0.15);
+  --accent-tint-edge-sm: rgba(0, 205, 186, 0.28);
+  --accent-tint-edge:    rgba(0, 205, 186, 0.40);
+  --accent-glow:         rgba(0, 205, 186, 0.35);
+
+  --info-fg:               #5B9EF0;
+  --info-tint-xs:          rgba(7, 94, 219, 0.12);
+  --info-tint-sm:          rgba(7, 94, 219, 0.18);
+  --info-tint-md:          rgba(7, 94, 219, 0.12);
+  --info-tint-edge:        rgba(91, 158, 240, 0.25);
+  --info-tint-edge-strong: rgba(91, 158, 240, 0.40);
+
+  --success-fg:        #4fc98a;
+  --success-tint-md:   rgba(79, 201, 138, 0.12);
+  --success-tint-edge: rgba(79, 201, 138, 0.32);
+
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.30);
+  --shadow-md:  0 8px 24px rgba(0,0,0,0.40);
+  --shadow-lg:  0 24px 64px rgba(0,0,0,0.55);
+  --shadow-inset-hairline: inset 0 0 0 1px var(--hairline);
+  --shadow-glow-lime: 0 0 0 1px var(--hairline-lime), 0 0 24px rgba(0,205,186,0.22);
+
+  /* For nav backdrop */
+  --nav-bg: rgba(13, 27, 46, 0.85);
+}
+
+/* ── LIGHT MODE ───────────────────────────────────────────── */
+html[data-theme="light"] {
+  --carbon-black:   #FFFFFF;
+  --carbon-black-2: #F7F9FC;
+  --carbon-black-3: #ECF1F7;
+  --bone-white:     var(--cw-navy);
+  --silver:         #4A6896;
+  --silver-2:       #8A9BBC;
+  --neon-lime:      var(--cw-teal);
+  --neon-lime-dim:  var(--cw-teal-2);
+  --yale-blue:      var(--cw-royal);
+  --yale-blue-2:    var(--cw-deep);
+
+  --bg-0:       #FFFFFF;
+  --bg-1:       #F7F9FC;
+  --bg-2:       #ECF1F7;
+  --bg-inverse: var(--cw-navy);
+
+  --fg-1:       var(--cw-navy);
+  --fg-2:       #4A6896;
+  --fg-3:       #8A9BBC;
+  --fg-inverse: #FFFFFF;
+
+  --accent:       var(--cw-teal);
+  --accent-hover: var(--cw-teal-2);
+  --accent-fg:    #FFFFFF;
+
+  --link:       var(--cw-royal);
+  --link-hover: var(--cw-navy);
+
+  --hairline:        rgba(0, 48, 119, 0.08);
+  --hairline-strong: rgba(0, 48, 119, 0.18);
+  --hairline-lime:   rgba(0, 205, 186, 0.30);
+  --border:          var(--hairline);
+  --border-strong:   var(--hairline-strong);
+  --focus-ring:      var(--cw-teal);
+
+  --accent-tint-xs:      rgba(0, 205, 186, 0.06);
+  --accent-tint-sm:      rgba(0, 205, 186, 0.10);
+  --accent-tint-md:      rgba(0, 205, 186, 0.14);
+  --accent-tint-edge-sm: rgba(0, 205, 186, 0.28);
+  --accent-tint-edge:    rgba(0, 205, 186, 0.42);
+  --accent-glow:         rgba(0, 205, 186, 0.35);
+
+  --info-fg:               var(--cw-royal);
+  --info-tint-xs:          rgba(7, 94, 219, 0.08);
+  --info-tint-sm:          rgba(7, 94, 219, 0.12);
+  --info-tint-md:          rgba(7, 94, 219, 0.08);
+  --info-tint-edge:        rgba(7, 94, 219, 0.22);
+  --info-tint-edge-strong: rgba(7, 94, 219, 0.34);
+
+  --success-fg:        #1f8f4d;
+  --success-tint-md:   rgba(31, 143, 77, 0.10);
+  --success-tint-edge: rgba(31, 143, 77, 0.28);
+
+  --shadow-sm:  0 1px 2px rgba(0, 48, 119, 0.06);
+  --shadow-md:  0 8px 24px rgba(0, 48, 119, 0.10);
+  --shadow-lg:  0 24px 64px rgba(0, 48, 119, 0.16);
+  --shadow-inset-hairline: inset 0 0 0 1px var(--hairline);
+  --shadow-glow-lime: 0 0 0 1px var(--hairline-lime), 0 0 24px rgba(0,205,186,0.22);
+
+  --nav-bg: rgba(255, 255, 255, 0.88);
+}
+
+/* ── Global element patches ───────────────────────────────── */
+
+/* Kill the dark dotted noise overlay */
+body::before { display: none !important; }
+
+/* Selection */
+*::selection { background: var(--cw-teal); color: #0D1B2E; }
+
+/* Sticky nav backdrop — uses --nav-bg so it adapts per theme */
+nav[style*="sticky"] {
+  background: var(--nav-bg) !important;
+  border-bottom: 1px solid var(--hairline) !important;
+}
+
+/* Avatar pill gradient */
+nav span[style*="linear-gradient(135deg, #c9dc5e"] {
+  background: linear-gradient(135deg, var(--cw-royal), var(--cw-teal)) !important;
+  color: #fff !important;
+}
+
+/* Bookmark button dark backdrop on cards */
+button[style*="rgba(26,25,25,0.7)"] {
+  background: rgba(13, 27, 46, 0.75) !important;
+  backdrop-filter: blur(8px);
+  color: var(--fg-1) !important;
+}
+html[data-theme="light"] button[style*="rgba(26,25,25,0.7)"] {
+  background: rgba(255, 255, 255, 0.86) !important;
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  color: var(--cw-navy) !important;
+}
+
+/* Notification badge ring */
+span[style*="box-shadow: 0 0 0 2px var(--carbon-black)"] {
+  box-shadow: 0 0 0 2px var(--bg-0) !important;
+}
+
+/* Watermark "cw" — navy tint at low opacity */
+[aria-hidden][style*="360px"] {
+  color: var(--cw-teal) !important;
+  opacity: 0.05 !important;
+}
+html[data-theme="light"] [aria-hidden][style*="360px"] {
+  color: var(--cw-navy) !important;
+}
+
+/* Italic spans in headings: bump weight so Montserrat 200 doesn't fade */
+span[style*="font-style: italic"] { font-weight: 500 !important; }
+
+/* Field focus */
+.cw-field-wrap input:focus,
+.cw-field-wrap textarea:focus,
+.cw-field-wrap select:focus {
+  border-color: var(--cw-teal) !important;
+  box-shadow: 0 0 0 3px var(--accent-tint-sm);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar-thumb { background: var(--bg-2) !important; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--silver-2) !important; }
+
+/* Theme toggle button */
+.cw-theme-toggle {
+  width: 36px; height: 36px; border-radius: 8px; border: 0;
+  background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--fg-2);
+  transition: background 120ms, color 120ms;
+}
+.cw-theme-toggle:hover {
+  background: var(--bg-2);
+  color: var(--fg-1);
+}

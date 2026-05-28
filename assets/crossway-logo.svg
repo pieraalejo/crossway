@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Crossway">
+  <defs>
+    <linearGradient id="cw-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#075EDB"/>
+      <stop offset="100%" stop-color="#003F9E"/>
+    </linearGradient>
+    <linearGradient id="cw-teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00CDBA"/>
+      <stop offset="100%" stop-color="#00B9A9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Blue ribbon: \ diagonal (top-left to bottom-right) -->
+  <g transform="rotate(45 100 100)">
+    <rect x="14" y="82" width="172" height="36" rx="18" fill="url(#cw-blue)"/>
+  </g>
+
+  <!-- Teal ribbon: / diagonal (top-right to bottom-left), drawn on top -->
+  <g transform="rotate(-45 100 100)">
+    <rect x="14" y="82" width="172" height="36" rx="18" fill="url(#cw-teal)" opacity="0.92"/>
+    <!-- subtle intersection deepening -->
+    <rect x="86" y="82" width="28" height="36" fill="#008B9F" opacity="0.55"/>
+  </g>
+
+  <!-- Compass dots: N/S blue, E/W teal -->
+  <circle cx="100" cy="20"  r="13" fill="#075EDB"/>
+  <circle cx="100" cy="180" r="13" fill="#075EDB"/>
+  <circle cx="180" cy="100" r="13" fill="#00CDBA"/>
+  <circle cx="20"  cy="100" r="13" fill="#00CDBA"/>
+</svg>
