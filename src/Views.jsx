@@ -28,12 +28,19 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
         right={<Btn variant="secondary" size="sm" icon="sliders-horizontal">Filters</Btn>}
       />
 
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 28, alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      <div style={{ marginTop: mobile ? 16 : 28 }}>
+        <div style={{
+          display: "flex", gap: 6,
+          overflowX: mobile ? "auto" : "visible",
+          flexWrap: mobile ? "nowrap" : "wrap",
+          paddingBottom: mobile ? 4 : 0,
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+        }}>
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => setCat(c)} style={{
-              cursor: "pointer", border: 0,
-              padding: "8px 14px", borderRadius: 999,
+              cursor: "pointer", border: 0, flexShrink: 0,
+              padding: mobile ? "7px 12px" : "8px 14px", borderRadius: 999,
               fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500, letterSpacing: "0.04em",
               background: cat === c ? "var(--bone-white)" : "transparent",
               color: cat === c ? "var(--carbon-black)" : "var(--fg-2)",
@@ -42,14 +49,16 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
             }}>{c}</button>
           ))}
         </div>
-        <select value={sort} onChange={e => setSort(e.target.value)} style={{
+        {!mobile && <select value={sort} onChange={e => setSort(e.target.value)} style={{
           background: "var(--bg-1)", border: "1px solid var(--hairline-strong)", color: "var(--fg-1)",
           padding: "8px 12px", borderRadius: 6, fontFamily: "var(--font-sans)", fontSize: 12, outline: 0, cursor: "pointer",
+          marginTop: 8,
         }}>
           <option value="relevance">Relevance</option>
           <option value="low">Price: low to high</option>
           <option value="high">Price: high to low</option>
-        </select>
+        </select>}
+      </div>
       </div>
 
       <div className="cw-market-grid" style={{
@@ -79,9 +88,7 @@ function MarketCard({ item, onChat, onItem, accent, mobile }) {
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         {item.emoji && <span style={{ fontSize: mobile ? 48 : 72, filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.4))" }}>{item.emoji}</span>}
-        <div style={{ position: "absolute", top: 12, left: 12 }}>
-          <VerifiedBadge size="sm" />
-        </div>
+        {!mobile && <div style={{ position: "absolute", top: 12, left: 12 }}><VerifiedBadge size="sm" /></div>}
         <button onClick={e => { e.stopPropagation(); setSaved(s => !s); }} style={{
           position: "absolute", top: 12, right: 12,
           width: 32, height: 32, borderRadius: 999, border: 0, cursor: "pointer",
@@ -258,26 +265,66 @@ function Events({ query, accent, onAttend, attending }) {
 }
 
 function EventRow({ ev, accent, onAttend, attending }) {
+  const mobile = useMobile();
   const [hover, setHover] = useState(false);
   const c = ev.color === "lime" ? accent : "var(--info-fg)";
   const cBg = ev.color === "lime" ? "var(--accent-tint-xs)" : "var(--info-tint-md)";
   const pct = Math.round((ev.attendees / ev.capacity) * 100);
+
+  const DateBox = () => (
+    <div style={{
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      background: cBg, borderRadius: 8, padding: mobile ? "10px 6px" : "14px 8px",
+      width: mobile ? 64 : "auto",
+      boxShadow: `inset 0 0 0 1px ${ev.color === "lime" ? "var(--accent-tint-edge-sm)" : "var(--info-tint-edge)"}`,
+    }}>
+      <div style={{ fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: c, fontWeight: 600 }}>{ev.date.m}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: mobile ? 30 : 44, lineHeight: 1, letterSpacing: "-0.04em", color: "var(--fg-1)", margin: "2px 0" }}>{ev.date.d}</div>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--fg-2)" }}>{ev.date.time}</div>
+    </div>
+  );
+
+  if (mobile) {
+    return (
+      <div style={{
+        display: "grid", gridTemplateColumns: "64px 1fr", gap: 12, alignItems: "stretch",
+        background: "var(--bg-1)", border: "1px solid var(--hairline)",
+        borderRadius: 12, padding: 14, transition: "all 220ms var(--ease-out)",
+      }}>
+        <DateBox />
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <Badge tone={ev.color === "lime" ? "lime" : "yale"} size="sm">{ev.tag}</Badge>
+            <span style={{ fontSize: 10, color: "var(--fg-3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "14ch" }}>by {ev.host}</span>
+          </div>
+          <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 14, letterSpacing: "-0.01em", color: "var(--fg-1)", lineHeight: 1.3 }}>{ev.title}</h4>
+          <div style={{ fontSize: 11, color: "var(--fg-2)", display: "flex", alignItems: "center", gap: 4 }}>
+            <Icon name="map-pin" size={10} />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ev.where}</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: 2 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ height: 3, background: "var(--bg-2)", borderRadius: 999, overflow: "hidden" }}>
+                <div style={{ width: `${pct}%`, height: "100%", background: c }} />
+              </div>
+              <div style={{ fontSize: 10, color: "var(--fg-3)", marginTop: 3 }}>{ev.attendees}/{ev.capacity} · {pct}%</div>
+            </div>
+            <Btn variant={attending ? "secondary" : "primary"} size="xs" icon={attending ? "check" : "calendar-plus"} onClick={() => onAttend(ev.id)}>
+              {attending ? "Going" : "Attend"}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{
       display: "grid", gridTemplateColumns: "104px 1fr auto", gap: 24, alignItems: "stretch",
       background: "var(--bg-1)", border: `1px solid ${hover ? "var(--hairline-strong)" : "var(--hairline)"}`,
       borderRadius: 12, padding: 20, transition: "all 220ms var(--ease-out)",
     }}>
-      <div style={{
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        background: cBg, borderRadius: 8, padding: "14px 8px",
-        boxShadow: `inset 0 0 0 1px ${ev.color === "lime" ? "var(--accent-tint-edge-sm)" : "var(--info-tint-edge)"}`,
-      }}>
-        <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: c, fontWeight: 600 }}>{ev.date.m}</div>
-        <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 44, lineHeight: 1, letterSpacing: "-0.04em", color: "var(--fg-1)", margin: "4px 0" }}>{ev.date.d}</div>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg-2)" }}>{ev.date.time}</div>
-      </div>
-
+      <DateBox />
       <div style={{ display: "flex", flexDirection: "column", gap: 10, justifyContent: "center", minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <Badge tone={ev.color === "lime" ? "lime" : "yale"} size="sm">{ev.tag}</Badge>
@@ -290,7 +337,6 @@ function EventRow({ ev, accent, onAttend, attending }) {
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Icon name="users-round" size={12} />{ev.attendees} / {ev.capacity}</span>
         </div>
       </div>
-
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", gap: 16, minWidth: 180 }}>
         <div style={{ width: "100%" }}>
           <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--fg-3)", marginBottom: 6, textAlign: "right" }}>Capacity · {pct}%</div>
@@ -308,17 +354,19 @@ function EventRow({ ev, accent, onAttend, attending }) {
 
 // ─── HEADER ────────────────────────────────────────────────────
 function ViewHeader({ eyebrow, title, meta, right }) {
+  const mobile = useMobile();
   return (
-    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
-      <div>
+    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <Eyebrow>{eyebrow}</Eyebrow>
         <h2 className="modulo" style={{
-          fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(34px, 4vw, 52px)",
-          lineHeight: 1.05, letterSpacing: "-0.025em", margin: "12px 0 6px", maxWidth: "20ch",
+          fontFamily: "var(--font-display)", fontWeight: 200,
+          fontSize: mobile ? "clamp(26px, 7vw, 36px)" : "clamp(34px, 4vw, 52px)",
+          lineHeight: 1.05, letterSpacing: "-0.025em", margin: "10px 0 6px", maxWidth: "20ch",
         }}>{title}</h2>
         {meta && <div style={{ fontSize: 12, color: "var(--fg-3)", fontFamily: "var(--font-mono)" }}>{meta}</div>}
       </div>
-      {right && <div style={{ paddingBottom: 8 }}>{right}</div>}
+      {right && !mobile && <div style={{ paddingBottom: 8 }}>{right}</div>}
     </div>
   );
 }
