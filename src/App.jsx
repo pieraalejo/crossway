@@ -1,5 +1,5 @@
 /* global React, ReactDOM, lucide,
-  Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift,
+  Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift, useMobile,
   Hero, Marketplace, Services, Events, ViewHeader,
   ChatOverlay, ItemDrawer, PostAdModal,
   CAMPUSES */
@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className="modulo-type" style={{ minHeight: "100vh", "--accent-dyn": accent }}>
-      <Navbar tab={tab} setTab={setTab} accent={accent} onChat={() => setChatOpen(true)} />
+      <Navbar tab={tab} setTab={setTab} accent={accent} onChat={() => setChatOpen(true)} onPost={() => setPostOpen(true)} />
 
       {tab === "home" && (
         <>
@@ -61,6 +61,7 @@ function App() {
       <Footer accent={accent} campus={campus} />
 
       {SHOW_FAB && <FAB onClick={() => setPostOpen(true)} accent={accent} />}
+      <BottomNav tab={tab} setTab={setTab} accent={accent} onPost={() => setPostOpen(true)} />}
 
       <ChatOverlay open={chatOpen} onClose={() => setChatOpen(false)} initial={chatTarget} accent={accent} />
       <ItemDrawer item={item} onClose={() => setItem(null)} onChat={openChat} accent={accent} />
@@ -112,7 +113,8 @@ function CrosswayMark({ size = 28 }) {
 }
 
 // ─── NAV ───────────────────────────────────────────────────────
-function Navbar({ tab, setTab, accent, onChat }) {
+function Navbar({ tab, setTab, accent, onChat, onPost }) {
+  const mobile = useMobile();
   const links = [
     { id: "home", label: "Home" },
     { id: "marketplace", label: "Marketplace" },
@@ -138,17 +140,18 @@ function Navbar({ tab, setTab, accent, onChat }) {
 
   return (
     <nav style={{
-      position: "sticky", top: 0, zIndex: 30, height: 64,
+      position: "sticky", top: 0, zIndex: 30, height: mobile ? 56 : 64,
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 32px", boxSizing: "border-box",
-      background: "rgba(26,25,25,0.78)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+      padding: mobile ? "0 16px" : "0 32px", boxSizing: "border-box",
+      background: "rgba(26,25,25,0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
       borderBottom: "1px solid var(--hairline)",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-        <button onClick={() => setTab("home")} style={{ background: "transparent", border: 0, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, padding: 0 }}>
-          <CrosswayMark size={28} />
-          <span style={{ fontFamily: "var(--font-brand, var(--font-display))", fontWeight: "var(--logo-weight, 200)", fontSize: 22, letterSpacing: "var(--logo-tracking, -0.02em)", color: "var(--fg-1)", textTransform: "var(--logo-transform, none)" }}>crossway</span>
-        </button>
+      <button onClick={() => setTab("home")} style={{ background: "transparent", border: 0, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, padding: 0 }}>
+        <CrosswayMark size={24} />
+        <span style={{ fontFamily: "var(--font-brand, var(--font-display))", fontWeight: "var(--logo-weight, 200)", fontSize: mobile ? 18 : 22, letterSpacing: "var(--logo-tracking, -0.02em)", color: "var(--fg-1)", textTransform: "var(--logo-transform, none)" }}>crossway</span>
+      </button>
+
+      {!mobile && (
         <div style={{ display: "flex", gap: 6 }}>
           {links.map(l => {
             const active = tab === l.id;
@@ -165,8 +168,9 @@ function Navbar({ tab, setTab, accent, onChat }) {
             );
           })}
         </div>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      )}
+
+      <div style={{ display: "flex", alignItems: "center", gap: mobile ? 4 : 8 }}>
         <NavIcon name="bell" badge="3" />
         <NavIcon name="message-square" onClick={onChat} badge="2" />
         {window.__CW_REBRAND__ && (
@@ -174,13 +178,65 @@ function Navbar({ tab, setTab, accent, onChat }) {
             <Icon name={isDark ? "sun" : "moon"} size={16} />
           </button>
         )}
-        <span style={{ width: 1, height: 22, background: "var(--hairline)", margin: "0 6px" }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 10px 4px 4px", background: "var(--bg-1)", borderRadius: 999, border: "1px solid var(--hairline)" }}>
-          <span style={{ width: 26, height: 26, borderRadius: 999, background: "linear-gradient(135deg, #c9dc5e, #5a7d52)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "var(--carbon-black)" }}>EM</span>
-          <span style={{ fontSize: 12, fontWeight: 500, color: "var(--fg-1)" }}>Emilia</span>
-          <Icon name="chevron-down" size={12} style={{ color: "var(--fg-3)" }} />
-        </div>
+        {!mobile && <span style={{ width: 1, height: 22, background: "var(--hairline)", margin: "0 6px" }} />}
+        {mobile ? (
+          <div style={{ width: 32, height: 32, borderRadius: 999, background: "linear-gradient(135deg, #c9dc5e, #5a7d52)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "var(--carbon-black)" }}>EM</div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 10px 4px 4px", background: "var(--bg-1)", borderRadius: 999, border: "1px solid var(--hairline)" }}>
+            <span style={{ width: 26, height: 26, borderRadius: 999, background: "linear-gradient(135deg, #c9dc5e, #5a7d52)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "var(--carbon-black)" }}>EM</span>
+            <span style={{ fontSize: 12, fontWeight: 500, color: "var(--fg-1)" }}>Emilia</span>
+            <Icon name="chevron-down" size={12} style={{ color: "var(--fg-3)" }} />
+          </div>
+        )}
       </div>
+    </nav>
+  );
+}
+
+// ─── BOTTOM NAV (mobile only) ──────────────────────────────────
+function BottomNav({ tab, setTab, accent, onPost }) {
+  const mobile = useMobile();
+  if (!mobile) return null;
+  const items = [
+    { id: "home",        icon: "home",         label: "Home" },
+    { id: "marketplace", icon: "shopping-bag",  label: "Market" },
+    { id: "post",        icon: "plus",          label: "Post",   action: true },
+    { id: "services",    icon: "users-round",   label: "Services" },
+    { id: "events",      icon: "calendar",      label: "Events" },
+  ];
+  return (
+    <nav style={{
+      position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40,
+      height: 64, background: "rgba(18,18,20,0.96)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
+      borderTop: "1px solid var(--hairline)",
+      display: "flex", alignItems: "center", justifyContent: "space-around",
+      paddingBottom: "env(safe-area-inset-bottom)",
+    }}>
+      {items.map(it => {
+        const active = tab === it.id;
+        if (it.action) return (
+          <button key="post" onClick={onPost} style={{
+            width: 48, height: 48, borderRadius: 999, border: 0,
+            background: accent, color: "var(--carbon-black)",
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", boxShadow: "0 4px 16px rgba(0,205,186,0.35)",
+          }}>
+            <Icon name="plus" size={22} stroke={2} />
+          </button>
+        );
+        return (
+          <button key={it.id} onClick={() => setTab(it.id)} style={{
+            background: "transparent", border: 0, cursor: "pointer",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+            padding: "4px 8px",
+            color: active ? accent : "var(--fg-3)",
+            transition: "color 120ms var(--ease-out)",
+          }}>
+            <Icon name={it.icon} size={22} stroke={active ? 2 : 1.5} />
+            <span style={{ fontSize: 10, fontFamily: "var(--font-sans)", fontWeight: active ? 600 : 400, letterSpacing: "0.03em" }}>{it.label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }
@@ -222,7 +278,7 @@ function Footer({ accent, campus }) {
   const c = (window.CAMPUSES || []).find(x => x.id === campus);
   return (
     <footer style={{ borderTop: "1px solid var(--hairline)", marginTop: 32, padding: "64px 48px 40px", maxWidth: 1440, margin: "32px auto 0" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }}>
+      <div className="cw-footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }}>
         <div>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 56, lineHeight: 1, letterSpacing: "-0.03em", color: "var(--fg-1)" }}>
             Only for <span style={{ fontStyle: "italic", color: accent }}>students.</span>
@@ -249,7 +305,7 @@ function Footer({ accent, campus }) {
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 64, display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 22, borderTop: "1px solid var(--hairline)" }}>
+      <div className="cw-footer-bottom" style={{ marginTop: 64, display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 22, borderTop: "1px solid var(--hairline)" }}>
         <div style={{ fontSize: 11, color: "var(--fg-3)", fontFamily: "var(--font-mono)" }}>© 2026 Crossway · v0.4 MVP · {c?.label}</div>
         <div style={{ fontSize: 11, color: "var(--fg-3)", letterSpacing: "0.14em", textTransform: "uppercase" }}>Made with care in Reutlingen</div>
       </div>
@@ -261,7 +317,7 @@ function Footer({ accent, campus }) {
 function FAB({ onClick, accent }) {
   const [hover, setHover] = useState(false);
   return (
-    <button onClick={onClick} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{
+    <button onClick={onClick} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="cw-fab" style={{
       position: "fixed", bottom: 28, right: 28, zIndex: 50,
       height: 56, padding: hover ? "0 22px 0 18px" : "0 18px",
       background: accent, color: "var(--carbon-black)",

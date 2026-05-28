@@ -1,8 +1,9 @@
-/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift, MARKETPLACE, SERVICES, EVENTS, REVIEWS, CATEGORIES */
+/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift, useMobile, MARKETPLACE, SERVICES, EVENTS, REVIEWS, CATEGORIES */
 const { useState, useMemo } = React;
 
 // ─── MARKETPLACE ───────────────────────────────────────────────
 function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
+  const mobile = useMobile();
   const [cat, setCat] = useState("All");
   const [sort, setSort] = useState("relevance");
 
@@ -19,7 +20,7 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
   }, [cat, sort, query]);
 
   return (
-    <section style={{ padding: "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
+    <section className="cw-section" style={{ padding: mobile ? "24px 16px 40px" : "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
       <ViewHeader
         eyebrow="Marketplace"
         title={<>What one student <span style={{ fontStyle: "italic", color: accent }}>doesn't need</span>, another one does.</>}
@@ -51,33 +52,33 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
         </select>
       </div>
 
-      <div style={{
+      <div className="cw-market-grid" style={{
         marginTop: 24, display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        gap: 16,
+        gridTemplateColumns: mobile ? "repeat(2, 1fr)" : "repeat(auto-fill, minmax(260px, 1fr))",
+        gap: mobile ? 10 : 16,
       }}>
-        {items.map(it => <MarketCard key={it.id} item={it} onChat={onChat} onItem={onItem} accent={accent} />)}
+        {items.map(it => <MarketCard key={it.id} item={it} onChat={onChat} onItem={onItem} accent={accent} mobile={mobile} />)}
       </div>
     </section>
   );
 }
 
-function MarketCard({ item, onChat, onItem, accent }) {
+function MarketCard({ item, onChat, onItem, accent, mobile }) {
   const [hover, setHover] = useState(false);
   const [saved, setSaved] = useState(false);
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={() => onItem(item)}
       style={{
-        background: "var(--bg-1)", borderRadius: 12, overflow: "hidden", cursor: "pointer",
+        background: "var(--bg-1)", borderRadius: 10, overflow: "hidden", cursor: "pointer",
         border: `1px solid ${hover ? "var(--hairline-strong)" : "var(--hairline)"}`,
         transition: "all 220ms var(--ease-out)",
         display: "flex", flexDirection: "column",
       }}>
-      <div style={{
-        height: 200, background: item.img, position: "relative",
+      <div className="cw-market-img" style={{
+        height: mobile ? 130 : 200, background: item.img, backgroundSize: "cover", backgroundPosition: "center", position: "relative",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        {item.emoji && <span style={{ fontSize: 72, filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.4))" }}>{item.emoji}</span>}
+        {item.emoji && <span style={{ fontSize: mobile ? 48 : 72, filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.4))" }}>{item.emoji}</span>}
         <div style={{ position: "absolute", top: 12, left: 12 }}>
           <VerifiedBadge size="sm" />
         </div>
@@ -94,38 +95,38 @@ function MarketCard({ item, onChat, onItem, accent }) {
           <Badge tone="neutral" size="sm">{item.condition}</Badge>
         </div>
       </div>
-      <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+      <div style={{ padding: mobile ? "10px 12px 12px" : "16px 18px 18px", display: "flex", flexDirection: "column", gap: mobile ? 8 : 12, flex: 1 }}>
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
-            <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 15, lineHeight: 1.3, color: "var(--fg-1)" }}>{item.title}</h4>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 24, lineHeight: 1, letterSpacing: "-0.02em", color: "var(--fg-1)", whiteSpace: "nowrap" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+            <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: mobile ? 12 : 15, lineHeight: 1.3, color: "var(--fg-1)" }}>{item.title}</h4>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: mobile ? 18 : 24, lineHeight: 1, letterSpacing: "-0.02em", color: "var(--fg-1)", whiteSpace: "nowrap" }}>
               {item.currency}{item.price}
             </div>
           </div>
-          <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 6, fontFamily: "var(--font-mono)" }}>{item.category}</div>
+          {!mobile && <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 6, fontFamily: "var(--font-mono)" }}>{item.category}</div>}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: "auto", paddingTop: 12, borderTop: "1px solid var(--hairline)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-            <span style={{ width: 22, height: 22, borderRadius: 999, background: "var(--bg-2)", color: "var(--fg-1)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, marginTop: "auto", paddingTop: mobile ? 8 : 12, borderTop: "1px solid var(--hairline)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+            <span style={{ width: 20, height: 20, borderRadius: 999, background: "var(--bg-2)", color: "var(--fg-1)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, flexShrink: 0 }}>
               {item.seller.split(" ").map(n => n[0]).join("")}
             </span>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.seller}</div>
-              <div style={{ fontSize: 10, color: "var(--fg-3)", display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ fontSize: mobile ? 10 : 11, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.seller}</div>
+              {!mobile && <div style={{ fontSize: 10, color: "var(--fg-3)", display: "flex", alignItems: "center", gap: 4 }}>
                 <Icon name="map-pin" size={9} />{item.dist}
-              </div>
+              </div>}
             </div>
           </div>
           <button onClick={e => { e.stopPropagation(); onChat(item); }} style={{
             border: 0, background: hover ? accent : "var(--bg-2)",
             color: hover ? "var(--carbon-black)" : "var(--fg-1)",
-            padding: "8px 12px", borderRadius: 6, cursor: "pointer",
-            fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, letterSpacing: "0.02em",
-            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: mobile ? "6px 8px" : "8px 12px", borderRadius: 6, cursor: "pointer",
+            fontFamily: "var(--font-sans)", fontSize: mobile ? 10 : 11, fontWeight: 600, letterSpacing: "0.02em",
+            display: "inline-flex", alignItems: "center", gap: 4,
             transition: "all 120ms var(--ease-out)",
           }}>
-            <Icon name="message-square" size={11} /> Chat
+            <Icon name="message-square" size={10} /> Chat
           </button>
         </div>
       </div>
@@ -135,6 +136,7 @@ function MarketCard({ item, onChat, onItem, accent }) {
 
 // ─── SERVICES ──────────────────────────────────────────────────
 function Services({ query, onChat, accent }) {
+  const mobile = useMobile();
   const items = useMemo(() => {
     if (!query) return SERVICES;
     const q = query.toLowerCase();
@@ -142,7 +144,7 @@ function Services({ query, onChat, accent }) {
   }, [query]);
 
   return (
-    <section style={{ padding: "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
+    <section className="cw-section" style={{ padding: mobile ? "24px 16px 40px" : "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
       <ViewHeader
         eyebrow="Services · Student-to-student"
         title={<>Campus skills,{" "}<span style={{ fontStyle: "italic", color: accent }}>within reach.</span></>}
@@ -150,9 +152,9 @@ function Services({ query, onChat, accent }) {
         right={<Btn variant="secondary" size="sm" icon="plus">Offer yours</Btn>}
       />
 
-      <div style={{
+      <div className="cw-service-grid" style={{
         marginTop: 28, display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+        gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fill, minmax(360px, 1fr))",
         gap: 16,
       }}>
         {items.map(s => <ServiceCard key={s.id} svc={s} onChat={onChat} accent={accent} />)}
@@ -229,6 +231,7 @@ function ServiceCard({ svc, onChat, accent }) {
 
 // ─── EVENTS ────────────────────────────────────────────────────
 function Events({ query, accent, onAttend, attending }) {
+  const mobile = useMobile();
   const items = useMemo(() => {
     if (!query) return EVENTS;
     const q = query.toLowerCase();
@@ -236,7 +239,7 @@ function Events({ query, accent, onAttend, attending }) {
   }, [query]);
 
   return (
-    <section style={{ padding: "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
+    <section className="cw-section" style={{ padding: mobile ? "24px 16px 40px" : "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
       <ViewHeader
         eyebrow="Campus calendar"
         title={<>This week on <span style={{ fontStyle: "italic", color: accent }}>campus.</span></>}

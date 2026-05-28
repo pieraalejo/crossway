@@ -1,8 +1,9 @@
-/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift, MARKETPLACE, SERVICES, EVENTS, CATEGORIES, CAMPUSES */
+/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, HoverLift, useMobile, MARKETPLACE, SERVICES, EVENTS, CATEGORIES, CAMPUSES */
 const { useState, useMemo } = React;
 
 // ─── HERO ──────────────────────────────────────────────────────
 function Hero({ campus, setCampus, onTab, onSearch, query, setQuery, accent }) {
+  const mobile = useMobile();
   const stats = [
     { v: "2,847", l: "Verified students" },
     { v: "412", l: "Active items" },
@@ -16,7 +17,7 @@ function Hero({ campus, setCampus, onTab, onSearch, query, setQuery, accent }) {
   ];
 
   return (
-    <section style={{ padding: "56px 48px 32px", maxWidth: 1440, margin: "0 auto", position: "relative" }}>
+    <section className="cw-hero" style={{ padding: mobile ? "28px 20px 20px" : "56px 48px 32px", maxWidth: 1440, margin: "0 auto", position: "relative" }}>
       {/* watermark mark */}
       <div aria-hidden style={{
         position: "absolute", right: -40, top: 0, fontFamily: "var(--font-display)", fontStyle: "italic",
@@ -31,7 +32,7 @@ function Hero({ campus, setCampus, onTab, onSearch, query, setQuery, accent }) {
       </div>
 
       <h1 className="modulo" style={{
-        fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(48px, 6.4vw, 92px)",
+        fontFamily: "var(--font-display)", fontWeight: 200, fontSize: mobile ? "clamp(36px, 9vw, 56px)" : "clamp(48px, 6.4vw, 92px)",
         lineHeight: 0.98, letterSpacing: "-0.03em", maxWidth: "16ch", margin: 0,
       }}>
         What do you need today at{" "}
@@ -43,8 +44,8 @@ function Hero({ campus, setCampus, onTab, onSearch, query, setQuery, accent }) {
       </h1>
 
       <p style={{
-        fontFamily: "var(--font-sans)", fontSize: 17, lineHeight: 1.6, color: "var(--fg-2)",
-        maxWidth: "52ch", marginTop: 28, marginBottom: 36,
+        fontFamily: "var(--font-sans)", fontSize: mobile ? 14 : 17, lineHeight: 1.6, color: "var(--fg-2)",
+        maxWidth: "52ch", marginTop: mobile ? 16 : 28, marginBottom: mobile ? 20 : 36,
       }}>
         Crossway replaces scattered WhatsApp groups and forums.
         A closed ecosystem, only for students with a .edu email — to
@@ -56,35 +57,35 @@ function Hero({ campus, setCampus, onTab, onSearch, query, setQuery, accent }) {
       <SearchBar query={query} setQuery={setQuery} onSearch={onSearch} accent={accent} />
 
       {/* Tabs / pillars */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 32 }}>
+      <div className="cw-pillar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 32 }}>
         {tabs.map(t => (
-          <PillarCard key={t.id} tab={t} onClick={() => onTab(t.id)} accent={accent} />
+          <PillarCard key={t.id} tab={t} onClick={() => onTab(t.id)} accent={accent} mobile={mobile} />
         ))}
       </div>
 
       {/* Trust strip */}
-      <div style={{
-        marginTop: 32, padding: "18px 24px",
+      <div className="cw-trust" style={{
+        marginTop: mobile ? 20 : 32, padding: mobile ? "14px 16px" : "18px 24px",
         background: "var(--bg-1)", border: "1px solid var(--hairline)",
-        borderRadius: 12, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap",
+        borderRadius: 12, display: "flex", alignItems: mobile ? "flex-start" : "center", gap: 16, flexWrap: "wrap",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{
             width: 36, height: 36, borderRadius: 999, background: "var(--accent-tint-md)",
             boxShadow: "inset 0 0 0 1px var(--accent-tint-edge)",
-            display: "inline-flex", alignItems: "center", justifyContent: "center", color: accent,
+            display: "inline-flex", alignItems: "center", justifyContent: "center", color: accent, flexShrink: 0,
           }}><Icon name="shield-check" size={18} /></span>
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: "var(--fg-1)" }}>University email only.</div>
-            <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 2 }}>No scams, no bots. Every account is verified through your campus SSO.</div>
+            {!mobile && <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 2 }}>No scams, no bots. Every account is verified through your campus SSO.</div>}
           </div>
         </div>
-        <span style={{ width: 1, height: 32, background: "var(--hairline)" }} />
-        <div style={{ display: "flex", gap: 28, flex: 1, minWidth: 220, justifyContent: "flex-end" }}>
+        {!mobile && <span className="cw-trust-divider" style={{ width: 1, height: 32, background: "var(--hairline)" }} />}
+        <div className="cw-stats" style={{ display: "flex", gap: mobile ? 16 : 28, flex: 1, minWidth: 0, justifyContent: mobile ? "flex-start" : "flex-end", flexWrap: "wrap" }}>
           {stats.map(s => (
-            <div key={s.l} style={{ textAlign: "right" }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 22, lineHeight: 1, letterSpacing: "-0.02em", color: "var(--fg-1)" }}>{s.v}</div>
-              <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--fg-3)", marginTop: 6 }}>{s.l}</div>
+            <div key={s.l} style={{ textAlign: mobile ? "left" : "right" }}>
+              <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: mobile ? 18 : 22, lineHeight: 1, letterSpacing: "-0.02em", color: "var(--fg-1)" }}>{s.v}</div>
+              <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--fg-3)", marginTop: 4 }}>{s.l}</div>
             </div>
           ))}
         </div>
@@ -137,6 +138,7 @@ function CampusPicker({ campus, setCampus, accent }) {
 }
 
 function SearchBar({ query, setQuery, onSearch, accent }) {
+  const mobile = useMobile();
   const [focus, setFocus] = useState(false);
   const suggestions = ["ikea desk", "statistics tutoring", "bicycle", "spring bash", "monitor 27"];
   return (
@@ -162,46 +164,51 @@ function SearchBar({ query, setQuery, onSearch, accent }) {
         }}
       />
       <div style={{ display: "flex", alignItems: "center", gap: 4, paddingRight: 4 }}>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", color: "var(--fg-3)", fontSize: 11, fontFamily: "var(--font-mono)", border: "1px solid var(--hairline)", borderRadius: 6 }}>
-          <span>⌘</span><span>K</span>
-        </span>
-        <Btn size="md" onClick={onSearch}>Search</Btn>
+        {!mobile && (
+          <span className="cw-search-kbd" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", color: "var(--fg-3)", fontSize: 11, fontFamily: "var(--font-mono)", border: "1px solid var(--hairline)", borderRadius: 6 }}>
+            <span>⌘</span><span>K</span>
+          </span>
+        )}
+        <Btn size={mobile ? "sm" : "md"} onClick={onSearch}>Search</Btn>
       </div>
     </div>
   );
 }
 
-function PillarCard({ tab, onClick, accent }) {
+function PillarCard({ tab, onClick, accent, mobile }) {
   const [hover, setHover] = useState(false);
   return (
     <button onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={onClick}
+      className="cw-pillar-card"
       style={{
-        textAlign: "left", cursor: "pointer", border: 0, padding: "24px 22px",
+        textAlign: "left", cursor: "pointer", border: 0, padding: mobile ? "14px 12px" : "24px 22px",
         background: hover ? "var(--bg-2)" : "var(--bg-1)",
         borderRadius: 12, boxShadow: `inset 0 0 0 1px ${hover ? "var(--hairline-strong)" : "var(--hairline)"}`,
         transition: "all 220ms var(--ease-out)",
-        display: "flex", flexDirection: "column", gap: 14, position: "relative", overflow: "hidden",
+        display: "flex", flexDirection: "column", gap: mobile ? 8 : 14, position: "relative", overflow: "hidden",
       }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{
-          width: 40, height: 40, borderRadius: 8,
+          width: mobile ? 32 : 40, height: mobile ? 32 : 40, borderRadius: 8,
           background: hover ? accent : "var(--bg-2)",
           color: hover ? "var(--carbon-black)" : "var(--fg-1)",
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           transition: "all 220ms var(--ease-out)",
           boxShadow: hover ? "none" : "inset 0 0 0 1px var(--hairline-strong)",
         }}>
-          <Icon name={tab.icon} size={20} stroke={1.6} />
+          <Icon name={tab.icon} size={mobile ? 16 : 20} stroke={1.6} />
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg-3)" }}>{tab.count} active</span>
+        {!mobile && <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg-3)" }}>{tab.count} active</span>}
       </div>
       <div>
-        <div style={{ fontFamily: "var(--font-sans)", fontSize: 18, fontWeight: 600, color: "var(--fg-1)", letterSpacing: "-0.01em" }}>{tab.label}</div>
-        <div style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--fg-2)", marginTop: 4 }}>{tab.desc}</div>
+        <div style={{ fontFamily: "var(--font-sans)", fontSize: mobile ? 12 : 18, fontWeight: 600, color: "var(--fg-1)", letterSpacing: "-0.01em" }}>{tab.label}</div>
+        {!mobile && <div style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--fg-2)", marginTop: 4 }}>{tab.desc}</div>}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, color: hover ? accent : "var(--fg-2)", fontSize: 12, fontWeight: 500, marginTop: 4, transition: "color 220ms var(--ease-out)" }}>
-        Browse all <Icon name="arrow-right" size={14} />
-      </div>
+      {!mobile && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, color: hover ? accent : "var(--fg-2)", fontSize: 12, fontWeight: 500, marginTop: 4, transition: "color 220ms var(--ease-out)" }}>
+          Browse all <Icon name="arrow-right" size={14} />
+        </div>
+      )}
     </button>
   );
 }
