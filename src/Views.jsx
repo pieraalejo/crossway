@@ -2,12 +2,12 @@
 const { useState, useMemo } = React;
 
 // ─── MARKETPLACE ───────────────────────────────────────────────
-function Marketplace({ query, onChat, onItem, accent }) {
+function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
   const [cat, setCat] = useState("All");
   const [sort, setSort] = useState("relevance");
 
   const items = useMemo(() => {
-    let xs = MARKETPLACE.slice();
+    let xs = [...extraItems, ...MARKETPLACE];
     if (cat !== "All") xs = xs.filter(i => i.category === cat);
     if (query) {
       const q = query.toLowerCase();

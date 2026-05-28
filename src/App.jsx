@@ -28,6 +28,9 @@ function App() {
   const [postOpen, setPostOpen] = useState(false);
   const [attending, setAttending] = useState(new Set(["e3"]));
   const [notif, setNotif] = useState(null);
+  const [extraItems, setExtraItems] = useState([]);
+
+  const addItem = (newItem) => setExtraItems(xs => [newItem, ...xs]);
 
   const openChat = (target) => { setChatTarget(target); setChatOpen(true); };
   const toggleAttend = (id) => {
@@ -48,10 +51,10 @@ function App() {
         <>
           <Hero campus={campus} setCampus={setCampus} accent={accent}
             onTab={(t) => setTab(t)} onSearch={() => {}} query={query} setQuery={setQuery} />
-          <FeaturedSections accent={accent} setTab={setTab} onChat={openChat} onItem={setItem} attending={attending} onAttend={toggleAttend} />
+          <FeaturedSections accent={accent} setTab={setTab} onChat={openChat} onItem={setItem} attending={attending} onAttend={toggleAttend} extraItems={extraItems} />
         </>
       )}
-      {tab === "marketplace" && <Marketplace query={query} onChat={openChat} onItem={setItem} accent={accent} />}
+      {tab === "marketplace" && <Marketplace query={query} onChat={openChat} onItem={setItem} accent={accent} extraItems={extraItems} />}
       {tab === "services" && <Services query={query} onChat={openChat} accent={accent} />}
       {tab === "events" && <Events query={query} accent={accent} onAttend={toggleAttend} attending={attending} />}
 
@@ -61,7 +64,7 @@ function App() {
 
       <ChatOverlay open={chatOpen} onClose={() => setChatOpen(false)} initial={chatTarget} accent={accent} />
       <ItemDrawer item={item} onClose={() => setItem(null)} onChat={openChat} accent={accent} />
-      <PostAdModal open={postOpen} onClose={() => setPostOpen(false)} accent={accent} />
+      <PostAdModal open={postOpen} onClose={() => setPostOpen(false)} accent={accent} onPost={addItem} />
 
       {notif && (
         <div style={{
@@ -191,7 +194,7 @@ function NavIcon({ name, badge, onClick }) {
     }}>
       <Icon name={name} size={17} />
       {badge && <span style={{
-        position: "absolute", top: 6, right: 6, minWidth: 16, height: 16, padding: "0 4px",
+        position: "absolute", top: 2, right: 2, minWidth: 16, height: 16, padding: "0 4px",
         borderRadius: 999, background: "var(--neon-lime)", color: "var(--carbon-black)",
         fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center",
         boxShadow: "0 0 0 2px var(--carbon-black)",
@@ -201,11 +204,11 @@ function NavIcon({ name, badge, onClick }) {
 }
 
 // ─── FEATURED ON HOME ──────────────────────────────────────────
-function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend }) {
+function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend, extraItems }) {
   return (
     <>
       <div style={{ height: 1, background: "var(--hairline)", margin: "32px 48px 0", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />
-      <Marketplace query="" onChat={onChat} onItem={onItem} accent={accent} />
+      <Marketplace query="" onChat={onChat} onItem={onItem} accent={accent} extraItems={extraItems} />
       <div style={{ height: 1, background: "var(--hairline)", margin: "0 48px", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />
       <Services query="" onChat={onChat} accent={accent} />
       <div style={{ height: 1, background: "var(--hairline)", margin: "0 48px", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />

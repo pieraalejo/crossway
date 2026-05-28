@@ -53,10 +53,10 @@ const CHAT_THREAD = [
 const CATEGORIES = ["All", "Furniture", "Books", "Electronics", "Transport", "Kitchen", "Notes", "Sports"];
 
 const CAMPUSES = [
-  { id: "esb-reutlingen", label: "ESB Reutlingen" },
-  { id: "ub-rosario",     label: "UNR · Rosario" },
-  { id: "tum-munich",     label: "TUM · München" },
-  { id: "uba-buenos",     label: "UBA · Buenos Aires" },
+  { id: "esb-reutlingen",   label: "ESB · Reutlingen" },
+  { id: "uni-tuebingen",    label: "Universität Tübingen" },
+  { id: "dhbw-stuttgart",   label: "DHBW Stuttgart" },
+  { id: "uni-stuttgart",    label: "Universität Stuttgart" },
 ];
 
 Object.assign(window, { MARKETPLACE, SERVICES, EVENTS, REVIEWS, CHAT, CHAT_THREAD, CATEGORIES, CAMPUSES });

@@ -219,11 +219,23 @@ function ReviewCard({ r, accent }) {
 }
 
 // ─── POST AD MODAL ─────────────────────────────────────────────
-function PostAdModal({ open, onClose, accent }) {
+const EMOJI_MAP = { Furniture: "🪑", Books: "📕", Electronics: "🖥", Transport: "🚲", Kitchen: "☕️", Notes: "📄", Sports: "🛼", Other: "📦" };
+const IMG_MAP   = { Furniture: "linear-gradient(135deg,#c9b89a,#8a7456)", Books: "linear-gradient(135deg,#2a3b5c,#0e1a2e)", Electronics: "linear-gradient(135deg,#3a3a3a,#1a1a1a)", Transport: "linear-gradient(135deg,#5a7d52,#2d4127)", Kitchen: "linear-gradient(135deg,#8a8a8a,#4a4a4a)", Notes: "linear-gradient(135deg,#c9dc5e,#6e7a2b)", Sports: "linear-gradient(135deg,#c75050,#6e2424)", Other: "linear-gradient(135deg,#c9dc5e,#6e7a2b)" };
+
+function PostAdModal({ open, onClose, accent, onPost }) {
   const [step, setStep] = useState(0);
   const [type, setType] = useState("item");
   const [done, setDone] = useState(false);
-  useEffect(() => { if (!open) { setStep(0); setDone(false); } }, [open]);
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [condition, setCondition] = useState("Good");
+  const [category, setCategory] = useState("Other");
+  const [desc, setDesc] = useState("");
+
+  useEffect(() => {
+    if (!open) { setStep(0); setDone(false); setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); }
+  }, [open]);
+
   if (!open) return null;
 
   const types = [
@@ -231,6 +243,27 @@ function PostAdModal({ open, onClose, accent }) {
     { id: "service", icon: "users-round", label: "Offer a service", desc: "Tutoring, freelance, gym partner…" },
     { id: "event", icon: "calendar", label: "Create an event", desc: "Study, party, workshop…" },
   ];
+
+  const publish = () => {
+    if (!title.trim()) return;
+    const newItem = {
+      id: "m" + Date.now(),
+      title: title.trim(),
+      price: parseFloat(price) || 0,
+      currency: "€",
+      category,
+      condition,
+      seller: "Emilia M.",
+      program: "BSc International Business",
+      verified: true,
+      dist: "Campus",
+      img: IMG_MAP[category] || IMG_MAP.Other,
+      emoji: EMOJI_MAP[category] || "📦",
+      desc: desc.trim() || "—",
+    };
+    onPost && onPost(newItem);
+    setDone(true);
+  };
 
   return (
     <>
@@ -254,10 +287,10 @@ function PostAdModal({ open, onClose, accent }) {
             <div style={{ textAlign: "center", padding: "32px 20px" }}>
               <div style={{ width: 64, height: 64, margin: "0 auto 20px", borderRadius: 999, background: "var(--accent-tint-md)", boxShadow: "inset 0 0 0 1px var(--accent-tint-edge)", color: accent, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="check" size={28} stroke={1.8} /></div>
               <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 32, letterSpacing: "-0.02em", color: "var(--fg-1)" }}>Posted.</div>
-              <p style={{ margin: "12px auto 0", maxWidth: "32ch", fontSize: 14, color: "var(--fg-2)" }}>Your listing is now visible to <span style={{ color: accent }}>2,847</span> verified students on your campus.</p>
+              <p style={{ margin: "12px auto 0", maxWidth: "32ch", fontSize: 14, color: "var(--fg-2)" }}>Tu publicación ya es visible para <span style={{ color: accent }}>2,847</span> estudiantes verificados en tu campus.</p>
               <div style={{ marginTop: 28, display: "flex", gap: 8, justifyContent: "center" }}>
-                <Btn variant="secondary" size="md" onClick={onClose}>Close</Btn>
-                <Btn variant="primary" size="md" iconRight="arrow-right" onClick={onClose}>View my post</Btn>
+                <Btn variant="secondary" size="md" onClick={onClose}>Cerrar</Btn>
+                <Btn variant="primary" size="md" iconRight="arrow-right" onClick={onClose}>Ver mi publicación</Btn>
               </div>
             </div>
           ) : step === 0 ? (
@@ -283,22 +316,33 @@ function PostAdModal({ open, onClose, accent }) {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <Field label="Title"><input defaultValue="IKEA Linnmon Desk, white 100×60" /></Field>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <Field label="Price (€)"><input defaultValue="45" /></Field>
+              <Field label="Title">
+                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ej: Silla IKEA, escritorio, bicicleta…" />
+              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <Field label="Price (€)">
+                  <input value={price} onChange={e => setPrice(e.target.value)} placeholder="0" type="number" min="0" />
+                </Field>
+                <Field label="Category">
+                  <select value={category} onChange={e => setCategory(e.target.value)}>
+                    {["Furniture","Books","Electronics","Transport","Kitchen","Notes","Sports","Other"].map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </Field>
                 <Field label="Condition">
-                  <select defaultValue="Good">
+                  <select value={condition} onChange={e => setCondition(e.target.value)}>
                     <option>Like new</option><option>Good</option><option>Fair</option>
                   </select>
                 </Field>
               </div>
-              <Field label="Description"><textarea rows={4} defaultValue="White desk 100×60. No marks. Available from May 15." /></Field>
+              <Field label="Description">
+                <textarea rows={4} value={desc} onChange={e => setDesc(e.target.value)} placeholder="Descripción del objeto, dónde retirarlo, disponibilidad…" />
+              </Field>
               <div style={{ background: "var(--bg-1)", border: "1px dashed var(--hairline-strong)", borderRadius: 8, padding: "20px", textAlign: "center", color: "var(--fg-3)", fontSize: 12 }}>
                 <Icon name="image-plus" size={20} /> <div style={{ marginTop: 8 }}>Drag photos or click to upload</div>
               </div>
               <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 4 }}>
                 <Btn variant="ghost" size="md" icon="arrow-left" onClick={() => setStep(0)}>Back</Btn>
-                <Btn variant="primary" size="md" iconRight="check" onClick={() => setDone(true)}>Publish</Btn>
+                <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim()}>Publish</Btn>
               </div>
             </div>
           )}
