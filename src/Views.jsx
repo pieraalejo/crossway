@@ -193,9 +193,9 @@ function ServiceCard({ svc, onChat, accent }) {
             fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 22, letterSpacing: "-0.04em", flexShrink: 0,
           }}>{svc.provider.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 15, color: "var(--fg-1)", letterSpacing: "-0.005em" }}>{svc.name}</h4>
-              <VerifiedBadge size="sm" />
+              <span style={{ display: "inline-flex", flexShrink: 0 }}><VerifiedBadge size="sm" /></span>
             </div>
             <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span style={{ fontWeight: 500, color: "var(--fg-1)" }}>{svc.provider}</span>
