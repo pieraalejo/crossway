@@ -231,9 +231,24 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   const [condition, setCondition] = useState("Good");
   const [category, setCategory] = useState("Other");
   const [desc, setDesc] = useState("");
+  const [images, setImages] = useState([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileRef = useRef(null);
+
+  const handleFiles = (files) => {
+    const imgs = Array.from(files)
+      .filter(f => f.type.startsWith("image/"))
+      .map(f => ({ url: URL.createObjectURL(f), name: f.name }));
+    setImages(xs => [...xs, ...imgs]);
+  };
+
+  const removeImage = (idx) => setImages(xs => xs.filter((_, i) => i !== idx));
 
   useEffect(() => {
-    if (!open) { setStep(0); setDone(false); setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); }
+    if (!open) {
+      images.forEach(i => URL.revokeObjectURL(i.url));
+      setStep(0); setDone(false); setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); setImages([]);
+    }
   }, [open]);
 
   if (!open) return null;
@@ -257,8 +272,9 @@ function PostAdModal({ open, onClose, accent, onPost }) {
       program: "BSc International Business",
       verified: true,
       dist: "Campus",
-      img: IMG_MAP[category] || IMG_MAP.Other,
-      emoji: EMOJI_MAP[category] || "📦",
+      img: images.length > 0 ? `url(${images[0].url})` : (IMG_MAP[category] || IMG_MAP.Other),
+      emoji: images.length > 0 ? null : (EMOJI_MAP[category] || "📦"),
+      extraImgs: images.map(i => i.url),
       desc: desc.trim() || "—",
     };
     onPost && onPost(newItem);
@@ -337,9 +353,50 @@ function PostAdModal({ open, onClose, accent, onPost }) {
               <Field label="Description">
                 <textarea rows={4} value={desc} onChange={e => setDesc(e.target.value)} placeholder="Descripción del objeto, dónde retirarlo, disponibilidad…" />
               </Field>
-              <div style={{ background: "var(--bg-1)", border: "1px dashed var(--hairline-strong)", borderRadius: 8, padding: "20px", textAlign: "center", color: "var(--fg-3)", fontSize: 12 }}>
-                <Icon name="image-plus" size={20} /> <div style={{ marginTop: 8 }}>Drag photos or click to upload</div>
-              </div>
+              <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: "none" }}
+                onChange={e => { handleFiles(e.target.files); e.target.value = ""; }} />
+
+              {images.length > 0 && (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))", gap: 8 }}>
+                  {images.map((img, i) => (
+                    <div key={i} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1px solid var(--hairline)" }}>
+                      <img src={img.url} alt={img.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                      <button onClick={() => removeImage(i)} style={{
+                        position: "absolute", top: 4, right: 4, width: 20, height: 20,
+                        borderRadius: 999, border: 0, background: "rgba(0,0,0,0.65)", color: "#fff",
+                        display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
+                      }}><Icon name="x" size={10} /></button>
+                    </div>
+                  ))}
+                  <button onClick={() => fileRef.current.click()} style={{
+                    aspectRatio: "1", borderRadius: 8, border: "1px dashed var(--hairline-strong)",
+                    background: "var(--bg-1)", color: "var(--fg-3)", cursor: "pointer",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, fontSize: 10,
+                  }}>
+                    <Icon name="plus" size={16} />
+                    Add
+                  </button>
+                </div>
+              )}
+
+              {images.length === 0 && (
+                <div
+                  onClick={() => fileRef.current.click()}
+                  onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={e => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files); }}
+                  style={{
+                    background: dragOver ? "var(--bg-2)" : "var(--bg-1)",
+                    border: `1px dashed ${dragOver ? accent : "var(--hairline-strong)"}`,
+                    borderRadius: 8, padding: "28px 20px", textAlign: "center",
+                    color: "var(--fg-3)", fontSize: 12, cursor: "pointer",
+                    transition: "all 140ms var(--ease-out)",
+                  }}>
+                  <Icon name="image-plus" size={22} />
+                  <div style={{ marginTop: 8, fontWeight: 500 }}>Arrastrá fotos o hacé click para subir</div>
+                  <div style={{ marginTop: 4, fontSize: 11, color: "var(--fg-3)" }}>JPG, PNG, WEBP · múltiples imágenes · también desde el celular</div>
+                </div>
+              )}
               <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 4 }}>
                 <Btn variant="ghost" size="md" icon="arrow-left" onClick={() => setStep(0)}>Back</Btn>
                 <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim()}>Publish</Btn>

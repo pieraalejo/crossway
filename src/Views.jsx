@@ -77,7 +77,7 @@ function MarketCard({ item, onChat, onItem, accent }) {
         height: 200, background: item.img, position: "relative",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <span style={{ fontSize: 72, filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.4))" }}>{item.emoji}</span>
+        {item.emoji && <span style={{ fontSize: 72, filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.4))" }}>{item.emoji}</span>}
         <div style={{ position: "absolute", top: 12, left: 12 }}>
           <VerifiedBadge size="sm" />
         </div>

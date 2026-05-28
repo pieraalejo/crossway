@@ -194,10 +194,10 @@ function NavIcon({ name, badge, onClick }) {
     }}>
       <Icon name={name} size={17} />
       {badge && <span style={{
-        position: "absolute", top: 2, right: 2, minWidth: 16, height: 16, padding: "0 4px",
-        borderRadius: 999, background: "var(--neon-lime)", color: "var(--carbon-black)",
+        position: "absolute", top: -6, right: -4, minWidth: 18, height: 18, padding: "0 5px",
+        borderRadius: 999, background: "rgba(0,205,186,0.78)", color: "var(--carbon-black)",
         fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        boxShadow: "0 0 0 2px var(--carbon-black)",
+        boxShadow: "0 0 0 2px var(--bg-0)",
       }}>{badge}</span>}
     </button>
   );
