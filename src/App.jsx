@@ -30,7 +30,27 @@ function App() {
   const [notif, setNotif] = useState(null);
   const [extraItems, setExtraItems] = useState([]);
 
-  const addItem = (newItem) => setExtraItems(xs => [newItem, ...xs]);
+  useEffect(() => {
+    supaEnsureAuth();
+    supaFetchListings().then(items => setExtraItems(items));
+    const channel = supaSubscribeListings(item =>
+      setExtraItems(xs => xs.some(x => x.id === item.id) ? xs : [item, ...xs])
+    );
+    return () => channel.unsubscribe();
+  }, []);
+
+  const addItem = async (newItem, imageFile) => {
+    const dbItem = await supaInsertListing({
+      title:       newItem.title,
+      price:       newItem.price,
+      category:    newItem.category,
+      condition:   newItem.condition,
+      description: newItem.desc,
+      sellerName:  newItem.seller,
+      imageFile,
+    });
+    if (dbItem) setExtraItems(xs => xs.some(x => x.id === dbItem.id) ? xs : [dbItem, ...xs]);
+  };
 
   const openChat = (target) => { setChatTarget(target); setChatOpen(true); };
   const toggleAttend = (id) => {

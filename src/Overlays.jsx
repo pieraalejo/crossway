@@ -256,11 +256,13 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   const [step, setStep] = useState(0);
   const [type, setType] = useState("item");
   const [done, setDone] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [condition, setCondition] = useState("Good");
   const [category, setCategory] = useState("Other");
   const [desc, setDesc] = useState("");
+  const [sellerName, setSellerName] = useState("");
   const [images, setImages] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef(null);
@@ -268,7 +270,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   const handleFiles = (files) => {
     const imgs = Array.from(files)
       .filter(f => f.type.startsWith("image/"))
-      .map(f => ({ url: URL.createObjectURL(f), name: f.name }));
+      .map(f => ({ url: URL.createObjectURL(f), name: f.name, file: f }));
     setImages(xs => [...xs, ...imgs]);
   };
 
@@ -277,7 +279,8 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   useEffect(() => {
     if (!open) {
       images.forEach(i => URL.revokeObjectURL(i.url));
-      setStep(0); setDone(false); setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); setImages([]);
+      setStep(0); setDone(false); setPublishing(false);
+      setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); setSellerName(""); setImages([]);
     }
   }, [open]);
 
@@ -289,25 +292,26 @@ function PostAdModal({ open, onClose, accent, onPost }) {
     { id: "event", icon: "calendar", label: "Create an event", desc: "Study, party, workshop…" },
   ];
 
-  const publish = () => {
-    if (!title.trim()) return;
+  const publish = async () => {
+    if (!title.trim() || publishing) return;
+    setPublishing(true);
     const newItem = {
-      id: "m" + Date.now(),
-      title: title.trim(),
-      price: parseFloat(price) || 0,
-      currency: "€",
+      id:        "m" + Date.now(),
+      title:     title.trim(),
+      price:     parseFloat(price) || 0,
+      currency:  "€",
       category,
       condition,
-      seller: "Emilia M.",
-      program: "BSc International Business",
-      verified: true,
-      dist: "Campus",
-      img: images.length > 0 ? `url(${images[0].url})` : (IMG_MAP[category] || IMG_MAP.Other),
-      emoji: images.length > 0 ? null : (EMOJI_MAP[category] || "📦"),
-      extraImgs: images.map(i => i.url),
-      desc: desc.trim() || "—",
+      seller:    sellerName.trim() || "Student",
+      program:   "ESB · Reutlingen",
+      verified:  true,
+      dist:      "Campus",
+      img:       images.length > 0 ? `url(${images[0].url})` : (IMG_MAP[category] || IMG_MAP.Other),
+      emoji:     images.length > 0 ? null : (EMOJI_MAP[category] || "📦"),
+      desc:      desc.trim() || "—",
     };
-    onPost && onPost(newItem);
+    await onPost?.(newItem, images[0]?.file || null);
+    setPublishing(false);
     setDone(true);
   };
 
@@ -362,6 +366,9 @@ function PostAdModal({ open, onClose, accent, onPost }) {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <Field label="Tu nombre">
+                <input value={sellerName} onChange={e => setSellerName(e.target.value)} placeholder="Ej: Ana, Mateo, Julia…" />
+              </Field>
               <Field label="Title">
                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ej: Silla IKEA, escritorio, bicicleta…" />
               </Field>
@@ -429,7 +436,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
               )}
               <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 4 }}>
                 <Btn variant="ghost" size="md" icon="arrow-left" onClick={() => setStep(0)}>Back</Btn>
-                <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim()}>Publish</Btn>
+                <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim() || publishing}>{publishing ? "Publicando…" : "Publish"}</Btn>
               </div>
             </div>
           )}
