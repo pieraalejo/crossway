@@ -61,7 +61,7 @@ function App() {
       <Footer accent={accent} campus={campus} />
 
       {SHOW_FAB && <FAB onClick={() => setPostOpen(true)} accent={accent} />}
-      <BottomNav tab={tab} setTab={setTab} accent={accent} onPost={() => setPostOpen(true)} />}
+      <BottomNav tab={tab} setTab={setTab} accent={accent} onPost={() => setPostOpen(true)} />
 
       <ChatOverlay open={chatOpen} onClose={() => setChatOpen(false)} initial={chatTarget} accent={accent} />
       <ItemDrawer item={item} onClose={() => setItem(null)} onChat={openChat} accent={accent} />

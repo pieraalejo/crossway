@@ -150,7 +150,7 @@ function SearchBar({ query, setQuery, onSearch, accent }) {
       transition: "border-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out)",
       boxShadow: focus ? "0 0 0 3px var(--accent-tint-sm)" : "none",
     }}>
-      <span style={{ padding: "0 14px 0 16px", color: "var(--fg-2)" }}><Icon name="search" size={20} /></span>
+      <span style={{ padding: "0 12px 0 14px", color: "var(--fg-2)", display: "inline-flex", alignItems: "center", flexShrink: 0 }}><Icon name="search" size={20} /></span>
       <input
         value={query}
         onChange={e => setQuery(e.target.value)}
@@ -158,8 +158,8 @@ function SearchBar({ query, setQuery, onSearch, accent }) {
         onKeyDown={e => e.key === "Enter" && onSearch?.()}
         placeholder={mobile ? "Search listings, services, events…" : "What do you need today? Try: desk, stats tutor, spring bash…"}
         style={{
-          flex: 1, border: 0, outline: 0, background: "transparent",
-          fontFamily: "var(--font-sans)", fontSize: 16, color: "var(--fg-1)",
+          flex: 1, minWidth: 0, border: 0, outline: 0, background: "transparent",
+          fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--fg-1)",
           padding: "12px 0", letterSpacing: "-0.005em",
         }}
       />

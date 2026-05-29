@@ -1,16 +1,18 @@
-/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, CHAT, CHAT_THREAD, REVIEWS */
+/* global React, Icon, Eyebrow, Badge, VerifiedBadge, Btn, Stars, useMobile, CHAT, CHAT_THREAD, REVIEWS */
 const { useState, useEffect, useRef } = React;
 
 // ─── CHAT OVERLAY ──────────────────────────────────────────────
 function ChatOverlay({ open, onClose, initial, accent }) {
+  const mobile = useMobile();
   const [active, setActive] = useState(initial?.id || CHAT[0].id);
+  const [showThread, setShowThread] = useState(!!initial);
   const [draft, setDraft] = useState("");
   const [thread, setThread] = useState(CHAT_THREAD);
   const [typing, setTyping] = useState(false);
   const endRef = useRef(null);
   const current = CHAT.find(c => c.id === active) || CHAT[0];
 
-  useEffect(() => { if (initial) setActive(initial.id); }, [initial]);
+  useEffect(() => { if (initial) { setActive(initial.id); setShowThread(true); } }, [initial]);
   useEffect(() => { endRef.current?.parentElement?.scrollTo({ top: 9e9, behavior: "smooth" }); }, [thread, typing]);
 
   const send = () => {
@@ -25,103 +27,131 @@ function ChatOverlay({ open, onClose, initial, accent }) {
     }, 1400);
   };
 
+  const selectChat = (id) => { setActive(id); if (mobile) setShowThread(true); };
+
   if (!open) return null;
+
+  const InboxList = () => (
+    <aside style={{ background: "var(--bg-1)", borderRight: mobile ? "none" : "1px solid var(--hairline)", display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}>
+      <div style={{ padding: "18px 18px 14px", borderBottom: "1px solid var(--hairline)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <Eyebrow>Messages</Eyebrow>
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 26, letterSpacing: "-0.02em", marginTop: 6, color: "var(--fg-1)" }}>Inbox</div>
+        </div>
+        <button onClick={onClose} style={{ background: "transparent", border: 0, color: "var(--fg-2)", cursor: "pointer", padding: 6, borderRadius: 6 }}><Icon name="x" size={18} /></button>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 6 }}>
+        {CHAT.map(c => (
+          <button key={c.id} onClick={() => selectChat(c.id)} style={{
+            width: "100%", display: "flex", gap: 10, padding: "12px 12px",
+            background: active === c.id ? "var(--bg-2)" : "transparent", border: 0, borderRadius: 8,
+            cursor: "pointer", textAlign: "left", marginBottom: 2,
+          }}>
+            <span style={{
+              width: 36, height: 36, borderRadius: 999, background: c.color,
+              flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, letterSpacing: "-0.02em", color: "var(--carbon-black)",
+            }}>{c.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.from}</span>
+                <span style={{ fontSize: 10, color: "var(--fg-3)", flexShrink: 0 }}>{c.time}</span>
+              </div>
+              <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 2, fontFamily: "var(--font-mono)" }}>re: {c.item}</div>
+              <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{c.last}</div>
+            </div>
+            {c.unread > 0 && <span style={{ width: 8, height: 8, borderRadius: 999, background: accent, alignSelf: "flex-start", marginTop: 6, flexShrink: 0 }} />}
+          </button>
+        ))}
+      </div>
+    </aside>
+  );
+
+  const Thread = () => (
+    <main style={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1, background: "var(--bg-0)" }}>
+      <header style={{ padding: "14px 16px", borderBottom: "1px solid var(--hairline)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          {mobile && (
+            <button onClick={() => setShowThread(false)} style={{ background: "transparent", border: 0, color: "var(--fg-2)", cursor: "pointer", padding: "4px 4px 4px 0", display: "inline-flex", alignItems: "center" }}>
+              <Icon name="arrow-left" size={20} />
+            </button>
+          )}
+          <span style={{
+            width: 36, height: 36, borderRadius: 999, background: current.color,
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, color: "var(--carbon-black)", flexShrink: 0,
+          }}>{current.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>{current.from}</span>
+              <VerifiedBadge size="sm" />
+            </div>
+            <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>re: {current.item}</div>
+          </div>
+        </div>
+        {!mobile && <button onClick={onClose} style={{ background: "transparent", border: 0, color: "var(--fg-2)", cursor: "pointer", padding: 6, borderRadius: 6 }}><Icon name="x" size={18} /></button>}
+      </header>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ alignSelf: "center", fontSize: 10, color: "var(--fg-3)", letterSpacing: "0.16em", textTransform: "uppercase", padding: "4px 0" }}>Today</div>
+        {thread.map(m => (
+          <div key={m.id} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "80%", display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{
+              padding: "10px 14px", borderRadius: 10,
+              background: m.from === "me" ? accent : "var(--bg-1)",
+              color: m.from === "me" ? "var(--carbon-black)" : "var(--fg-1)",
+              border: m.from === "me" ? "0" : "1px solid var(--hairline)",
+              fontSize: 13, lineHeight: 1.5, fontFamily: "var(--font-sans)",
+              borderBottomRightRadius: m.from === "me" ? 2 : 10,
+              borderBottomLeftRadius: m.from === "me" ? 10 : 2,
+            }}>{m.text}</div>
+            <div style={{ fontSize: 10, color: "var(--fg-3)", textAlign: m.from === "me" ? "right" : "left", padding: "0 4px", fontFamily: "var(--font-mono)" }}>{m.time}</div>
+          </div>
+        ))}
+        {typing && (
+          <div style={{ alignSelf: "flex-start", padding: "12px 14px", background: "var(--bg-1)", borderRadius: 10, border: "1px solid var(--hairline)", display: "inline-flex", gap: 4 }}>
+            {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: 999, background: "var(--fg-2)", animation: `cwbounce 1.2s var(--ease-in-out) ${i * 0.15}s infinite` }} />)}
+          </div>
+        )}
+        <div ref={endRef} />
+      </div>
+
+      <footer style={{ borderTop: "1px solid var(--hairline)", padding: 12, display: "flex", gap: 8 }}>
+        <button style={{ background: "var(--bg-1)", border: "1px solid var(--hairline)", color: "var(--fg-2)", borderRadius: 8, width: 38, height: 38, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon name="paperclip" size={14} /></button>
+        <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Type a message…" style={{
+          flex: 1, minWidth: 0, background: "var(--bg-1)", border: "1px solid var(--hairline)", borderRadius: 8,
+          padding: "0 14px", color: "var(--fg-1)", fontFamily: "var(--font-sans)", fontSize: 13, outline: 0, height: 38,
+        }} />
+        <Btn size="sm" icon="send" onClick={send}>Send</Btn>
+      </footer>
+    </main>
+  );
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", zIndex: 80, animation: "cwfade 220ms var(--ease-out)" }} />
-      <div style={{
-        position: "fixed", right: 24, bottom: 24, top: 80, width: 760, maxWidth: "calc(100vw - 48px)",
-        background: "var(--bg-0)", border: "1px solid var(--hairline-strong)", borderRadius: 12,
-        boxShadow: "var(--shadow-lg)", zIndex: 81,
-        display: "grid", gridTemplateColumns: "260px 1fr", overflow: "hidden",
-        animation: "cwslide 280ms var(--ease-out)",
-      }}>
-        {/* sidebar */}
-        <aside style={{ background: "var(--bg-1)", borderRight: "1px solid var(--hairline)", display: "flex", flexDirection: "column", minHeight: 0 }}>
-          <div style={{ padding: "18px 18px 14px", borderBottom: "1px solid var(--hairline)" }}>
-            <Eyebrow>Messages</Eyebrow>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 26, letterSpacing: "-0.02em", marginTop: 6, color: "var(--fg-1)" }}>Inbox</div>
-          </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: 6 }}>
-            {CHAT.map(c => (
-              <button key={c.id} onClick={() => setActive(c.id)} style={{
-                width: "100%", display: "flex", gap: 10, padding: "12px 12px",
-                background: active === c.id ? "var(--bg-2)" : "transparent", border: 0, borderRadius: 8,
-                cursor: "pointer", textAlign: "left", marginBottom: 2,
-              }}>
-                <span style={{
-                  width: 36, height: 36, borderRadius: 999, background: c.color,
-                  flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, letterSpacing: "-0.02em", color: "var(--carbon-black)",
-                }}>{c.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.from}</span>
-                    <span style={{ fontSize: 10, color: "var(--fg-3)", flexShrink: 0 }}>{c.time}</span>
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 2, fontFamily: "var(--font-mono)" }}>re: {c.item}</div>
-                  <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{c.last}</div>
-                </div>
-                {c.unread > 0 && <span style={{ width: 8, height: 8, borderRadius: 999, background: accent, alignSelf: "flex-start", marginTop: 6, flexShrink: 0 }} />}
-              </button>
-            ))}
-          </div>
-        </aside>
-
-        {/* thread */}
-        <main style={{ display: "flex", flexDirection: "column", minHeight: 0, background: "var(--bg-0)" }}>
-          <header style={{ padding: "14px 20px", borderBottom: "1px solid var(--hairline)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-              <span style={{
-                width: 36, height: 36, borderRadius: 999, background: current.color,
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, color: "var(--carbon-black)",
-              }}>{current.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>{current.from}</span>
-                  <VerifiedBadge size="sm" />
-                </div>
-                <div style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 2 }}>{current.program} · re: {current.item}</div>
-              </div>
-            </div>
-            <button onClick={onClose} style={{ background: "transparent", border: 0, color: "var(--fg-2)", cursor: "pointer", padding: 6, borderRadius: 6 }}><Icon name="x" size={18} /></button>
-          </header>
-
-          <div style={{ flex: 1, overflowY: "auto", padding: "24px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ alignSelf: "center", fontSize: 10, color: "var(--fg-3)", letterSpacing: "0.16em", textTransform: "uppercase", padding: "4px 0" }}>Today</div>
-            {thread.map(m => (
-              <div key={m.id} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "75%", display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{
-                  padding: "10px 14px", borderRadius: 10,
-                  background: m.from === "me" ? accent : "var(--bg-1)",
-                  color: m.from === "me" ? "var(--carbon-black)" : "var(--fg-1)",
-                  border: m.from === "me" ? "0" : "1px solid var(--hairline)",
-                  fontSize: 13, lineHeight: 1.5, fontFamily: "var(--font-sans)",
-                  borderBottomRightRadius: m.from === "me" ? 2 : 10,
-                  borderBottomLeftRadius: m.from === "me" ? 10 : 2,
-                }}>{m.text}</div>
-                <div style={{ fontSize: 10, color: "var(--fg-3)", textAlign: m.from === "me" ? "right" : "left", padding: "0 4px", fontFamily: "var(--font-mono)" }}>{m.time}</div>
-              </div>
-            ))}
-            {typing && (
-              <div style={{ alignSelf: "flex-start", padding: "12px 14px", background: "var(--bg-1)", borderRadius: 10, border: "1px solid var(--hairline)", display: "inline-flex", gap: 4 }}>
-                {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: 999, background: "var(--fg-2)", animation: `cwbounce 1.2s var(--ease-in-out) ${i * 0.15}s infinite` }} />)}
-              </div>
-            )}
-            <div ref={endRef} />
-          </div>
-
-          <footer style={{ borderTop: "1px solid var(--hairline)", padding: 14, display: "flex", gap: 8 }}>
-            <button style={{ background: "var(--bg-1)", border: "1px solid var(--hairline)", color: "var(--fg-2)", borderRadius: 8, width: 38, height: 38, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="paperclip" size={14} /></button>
-            <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Type a message…" style={{
-              flex: 1, background: "var(--bg-1)", border: "1px solid var(--hairline)", borderRadius: 8,
-              padding: "0 14px", color: "var(--fg-1)", fontFamily: "var(--font-sans)", fontSize: 13, outline: 0, height: 38,
-            }} />
-            <Btn size="sm" icon="send" onClick={send}>Send</Btn>
-          </footer>
-        </main>
-      </div>
+      {mobile ? (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 81,
+          background: "var(--bg-0)",
+          display: "flex", flexDirection: "column",
+          animation: "cwslide 280ms var(--ease-out)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}>
+          {showThread ? <Thread /> : <InboxList />}
+        </div>
+      ) : (
+        <div style={{
+          position: "fixed", right: 24, bottom: 24, top: 80, width: 760, maxWidth: "calc(100vw - 48px)",
+          background: "var(--bg-0)", border: "1px solid var(--hairline-strong)", borderRadius: 12,
+          boxShadow: "var(--shadow-lg)", zIndex: 81,
+          display: "grid", gridTemplateColumns: "260px 1fr", overflow: "hidden",
+          animation: "cwslide 280ms var(--ease-out)",
+        }}>
+          <InboxList />
+          <Thread />
+        </div>
+      )}
     </>
   );
 }
