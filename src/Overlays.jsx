@@ -159,7 +159,10 @@ function ChatOverlay({ open, onClose, initial, accent }) {
 // ─── ITEM DETAIL DRAWER ────────────────────────────────────────
 function ItemDrawer({ item, onClose, onChat, accent }) {
   if (!item) return null;
-  const itemReviews = REVIEWS.filter(r => r.target === item.seller).concat(REVIEWS.slice(0, 2));
+  // Only show reviews for static demo items (fromDB items have no real reviews yet)
+  const itemReviews = item.fromDB ? [] : REVIEWS.filter(r => r.target === item.seller).concat(REVIEWS.slice(0, 2));
+  const hasRealImage = item.img && item.img.startsWith("url(http");
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", zIndex: 80, animation: "cwfade 220ms var(--ease-out)" }} />
@@ -172,10 +175,12 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 2, background: "rgba(26,25,25,0.7)", border: "1px solid var(--hairline-strong)", borderRadius: 999, width: 36, height: 36, color: "var(--fg-1)", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="x" size={16} /></button>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
-          <div style={{ height: 320, background: item.img, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <span style={{ fontSize: 140, filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.5))" }}>{item.emoji}</span>
+          <div style={{ height: 320, position: "relative", background: hasRealImage ? "var(--bg-2)" : item.img, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {hasRealImage
+              ? <img src={item.img.slice(4, -1)} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              : <span style={{ fontSize: 140, filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.5))" }}>{item.emoji}</span>
+            }
             <div style={{ position: "absolute", bottom: 16, left: 20, display: "flex", gap: 8 }}>
-              <VerifiedBadge size="sm" />
               <Badge tone="neutral" size="sm">{item.condition}</Badge>
             </div>
           </div>
@@ -190,7 +195,7 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
               </div>
             </div>
 
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--fg-2)" }}>{item.desc}</p>
+            {item.desc && item.desc !== "—" && <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--fg-2)" }}>{item.desc}</p>}
 
             <div style={{ background: "var(--bg-1)", border: "1px solid var(--hairline)", borderRadius: 10, padding: 18, display: "flex", alignItems: "center", gap: 14 }}>
               <span style={{ width: 48, height: 48, borderRadius: 999, background: "var(--bg-2)", color: "var(--fg-1)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 20 }}>
@@ -199,24 +204,28 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>{item.seller}</span>
-                  <VerifiedBadge size="sm" />
+                  {item.verified && !item.fromDB && <VerifiedBadge size="sm" />}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4 }}>{item.program}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>
-                  <Stars value={4.8} size={10} /> 4.8 · 12 transactions · {item.dist}
-                </div>
+                {!item.fromDB && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>
+                    <Stars value={4.8} size={10} /> 4.8 · 12 transactions · {item.dist}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                <Eyebrow>Seller reviews</Eyebrow>
-                <span style={{ fontSize: 11, color: "var(--fg-3)", fontFamily: "var(--font-mono)" }}>{itemReviews.length} reviews</span>
+            {itemReviews.length > 0 && (
+              <div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                  <Eyebrow>Seller reviews</Eyebrow>
+                  <span style={{ fontSize: 11, color: "var(--fg-3)", fontFamily: "var(--font-mono)" }}>{itemReviews.length} reviews</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {itemReviews.slice(0, 3).map(r => <ReviewCard key={r.id} r={r} accent={accent} />)}
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {itemReviews.slice(0, 3).map(r => <ReviewCard key={r.id} r={r} accent={accent} />)}
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -374,7 +383,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                 <Field label="Price (€)">
-                  <input value={price} onChange={e => setPrice(e.target.value)} placeholder="0" type="number" min="0" />
+                  <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9.]/g, ""))} placeholder="0" type="text" inputMode="decimal" pattern="[0-9]*" />
                 </Field>
                 <Field label="Category">
                   <select value={category} onChange={e => setCategory(e.target.value)}>
