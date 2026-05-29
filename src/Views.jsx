@@ -14,10 +14,11 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
       const q = query.toLowerCase();
       xs = xs.filter(i => i.title.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
     }
-    if (sort === "low") xs.sort((a,b) => a.price - b.price);
-    if (sort === "high") xs.sort((a,b) => b.price - a.price);
+    if (sort === "recent") xs.sort((a,b) => (b.fromDB ? 1 : 0) - (a.fromDB ? 1 : 0));
+    if (sort === "low")    xs.sort((a,b) => a.price - b.price);
+    if (sort === "high")   xs.sort((a,b) => b.price - a.price);
     return xs;
-  }, [cat, sort, query]);
+  }, [cat, sort, query, extraItems]);
 
   return (
     <section className="cw-section" style={{ padding: mobile ? "24px 16px 40px" : "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
@@ -49,15 +50,17 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
             }}>{c}</button>
           ))}
         </div>
-        {!mobile && <select value={sort} onChange={e => setSort(e.target.value)} style={{
+        <select value={sort} onChange={e => setSort(e.target.value)} style={{
           background: "var(--bg-1)", border: "1px solid var(--hairline-strong)", color: "var(--fg-1)",
-          padding: "8px 12px", borderRadius: 6, fontFamily: "var(--font-sans)", fontSize: 12, outline: 0, cursor: "pointer",
-          marginTop: 8,
+          padding: mobile ? "6px 10px" : "8px 12px", borderRadius: 6,
+          fontFamily: "var(--font-sans)", fontSize: 12, outline: 0, cursor: "pointer",
+          marginTop: 8, flexShrink: 0,
         }}>
           <option value="relevance">Relevance</option>
+          <option value="recent">Últimos listados</option>
           <option value="low">Price: low to high</option>
           <option value="high">Price: high to low</option>
-        </select>}
+        </select>
       </div>
 
       <div className="cw-market-grid" style={{

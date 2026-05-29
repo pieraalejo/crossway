@@ -158,10 +158,17 @@ function ChatOverlay({ open, onClose, initial, accent }) {
 
 // ─── ITEM DETAIL DRAWER ────────────────────────────────────────
 function ItemDrawer({ item, onClose, onChat, accent }) {
+  const [lightbox, setLightbox] = useState(false);
+  useEffect(() => {
+    if (!item) return;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [item]);
   if (!item) return null;
   // Only show reviews for static demo items (fromDB items have no real reviews yet)
   const itemReviews = item.fromDB ? [] : REVIEWS.filter(r => r.target === item.seller).concat(REVIEWS.slice(0, 2));
   const hasRealImage = item.img && item.img.startsWith("url(http");
+  const imgSrc = hasRealImage ? item.img.slice(4, -1) : null;
 
   return (
     <>
@@ -175,15 +182,29 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 2, background: "rgba(26,25,25,0.7)", border: "1px solid var(--hairline-strong)", borderRadius: 999, width: 36, height: 36, color: "var(--fg-1)", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="x" size={16} /></button>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
-          <div style={{ height: 320, position: "relative", background: hasRealImage ? "var(--bg-2)" : item.img, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            onClick={() => hasRealImage && setLightbox(true)}
+            style={{ height: 320, position: "relative", background: hasRealImage ? "var(--bg-2)" : item.img, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", cursor: hasRealImage ? "zoom-in" : "default" }}>
             {hasRealImage
-              ? <img src={item.img.slice(4, -1)} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              ? <img src={imgSrc} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               : <span style={{ fontSize: 140, filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.5))" }}>{item.emoji}</span>
             }
             <div style={{ position: "absolute", bottom: 16, left: 20, display: "flex", gap: 8 }}>
               <Badge tone="neutral" size="sm">{item.condition}</Badge>
             </div>
+            {hasRealImage && <div style={{ position: "absolute", bottom: 14, right: 14, width: 28, height: 28, borderRadius: 999, background: "rgba(0,0,0,0.5)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              <Icon name="expand" size={13} style={{ color: "#fff" }} />
+            </div>}
           </div>
+
+          {lightbox && (
+            <div onClick={() => setLightbox(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", animation: "cwfade 180ms ease" }}>
+              <img src={imgSrc} alt={item.title} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} onClick={e => e.stopPropagation()} />
+              <button onClick={() => setLightbox(false)} style={{ position: "absolute", top: 20, right: 20, width: 40, height: 40, borderRadius: 999, border: 0, background: "rgba(255,255,255,0.12)", color: "#fff", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+          )}
 
           <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
             <div>
@@ -383,7 +404,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                 <Field label="Price (€)">
-                  <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9.]/g, ""))} placeholder="0" type="text" inputMode="decimal" pattern="[0-9]*" />
+                  <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9.,]/g, "").replace(",", "."))} placeholder="0" type="text" inputMode="decimal" />
                 </Field>
                 <Field label="Category">
                   <select value={category} onChange={e => setCategory(e.target.value)}>

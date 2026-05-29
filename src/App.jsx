@@ -281,14 +281,31 @@ function NavIcon({ name, badge, onClick }) {
 
 // ─── FEATURED ON HOME ──────────────────────────────────────────
 function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend, extraItems }) {
+  const mobile = useMobile();
+  const SeeAll = ({ id, label }) => mobile ? (
+    <div style={{ padding: "0 16px 32px", marginTop: -16 }}>
+      <button onClick={() => setTab(id)} style={{
+        width: "100%", padding: "12px 0", border: "1px solid var(--hairline-strong)",
+        background: "transparent", borderRadius: 10, cursor: "pointer",
+        fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--fg-2)",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+      }}>Ver todos · {label} <Icon name="arrow-right" size={14} /></button>
+    </div>
+  ) : null;
+
+  const Divider = () => <div style={{ height: 1, background: "var(--hairline)", margin: mobile ? "0 16px" : "0 48px", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />;
+
   return (
     <>
-      <div style={{ height: 1, background: "var(--hairline)", margin: "32px 48px 0", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />
+      <Divider />
       <Marketplace query="" onChat={onChat} onItem={onItem} accent={accent} extraItems={extraItems} />
-      <div style={{ height: 1, background: "var(--hairline)", margin: "0 48px", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />
+      <SeeAll id="marketplace" label="Marketplace" />
+      <Divider />
       <Services query="" onChat={onChat} accent={accent} />
-      <div style={{ height: 1, background: "var(--hairline)", margin: "0 48px", maxWidth: 1440, marginLeft: "auto", marginRight: "auto" }} />
+      <SeeAll id="services" label="Services" />
+      <Divider />
       <Events query="" accent={accent} onAttend={onAttend} attending={attending} />
+      <SeeAll id="events" label="Events" />
     </>
   );
 }
