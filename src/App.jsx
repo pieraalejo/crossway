@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {
     supaEnsureAuth();
     supaFetchListings().then(items => setExtraItems(items));
-    const channel = supaSubscribeListings(item =>
+    const channel = supaSubscribeListings((item) =>
       setExtraItems(xs => xs.some(x => x.id === item.id) ? xs : [item, ...xs])
     );
     return () => channel.unsubscribe();
@@ -47,6 +47,8 @@ function App() {
       condition:   newItem.condition,
       description: newItem.desc,
       sellerName:  newItem.seller,
+      location:    newItem.location,
+      campus,
       imageFile,
     });
     if (dbItem) setExtraItems(xs => xs.some(x => x.id === dbItem.id) ? xs : [dbItem, ...xs]);
@@ -71,10 +73,10 @@ function App() {
         <>
           <Hero campus={campus} setCampus={setCampus} accent={accent}
             onTab={(t) => setTab(t)} onSearch={() => {}} query={query} setQuery={setQuery} />
-          <FeaturedSections accent={accent} setTab={setTab} onChat={openChat} onItem={setItem} attending={attending} onAttend={toggleAttend} extraItems={extraItems} />
+          <FeaturedSections accent={accent} setTab={setTab} onChat={openChat} onItem={setItem} attending={attending} onAttend={toggleAttend} extraItems={extraItems} campus={campus} />
         </>
       )}
-      {tab === "marketplace" && <Marketplace query={query} onChat={openChat} onItem={setItem} accent={accent} extraItems={extraItems} />}
+      {tab === "marketplace" && <Marketplace query={query} onChat={openChat} onItem={setItem} accent={accent} extraItems={extraItems} campus={campus} />}
       {tab === "services" && <Services query={query} onChat={openChat} accent={accent} />}
       {tab === "events" && <Events query={query} accent={accent} onAttend={toggleAttend} attending={attending} />}
 
@@ -280,7 +282,7 @@ function NavIcon({ name, badge, onClick }) {
 }
 
 // ─── FEATURED ON HOME ──────────────────────────────────────────
-function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend, extraItems }) {
+function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend, extraItems, campus }) {
   const mobile = useMobile();
   const SeeAll = ({ id, label }) => mobile ? (
     <div style={{ padding: "0 16px 32px", marginTop: -16 }}>
@@ -298,7 +300,7 @@ function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend,
   return (
     <>
       <Divider />
-      <Marketplace query="" onChat={onChat} onItem={onItem} accent={accent} extraItems={extraItems} />
+      <Marketplace query="" onChat={onChat} onItem={onItem} accent={accent} extraItems={extraItems} campus={campus} />
       <SeeAll id="marketplace" label="Marketplace" />
       <Divider />
       <Services query="" onChat={onChat} accent={accent} />

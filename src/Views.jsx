@@ -2,7 +2,7 @@
 const { useState, useMemo } = React;
 
 // ─── MARKETPLACE ───────────────────────────────────────────────
-function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
+function Marketplace({ query, onChat, onItem, accent, extraItems = [], campus = "esb-reutlingen" }) {
   const mobile = useMobile();
   const [cat, setCat] = useState("All");
   const [sort, setSort] = useState("relevance");
@@ -14,11 +14,16 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
       const q = query.toLowerCase();
       xs = xs.filter(i => i.title.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
     }
+    if (sort === "relevance") xs.sort((a,b) => {
+      const aMatch = (a.campus || "esb-reutlingen") === campus ? 1 : 0;
+      const bMatch = (b.campus || "esb-reutlingen") === campus ? 1 : 0;
+      return bMatch - aMatch;
+    });
     if (sort === "recent") xs.sort((a,b) => (b.fromDB ? 1 : 0) - (a.fromDB ? 1 : 0));
     if (sort === "low")    xs.sort((a,b) => a.price - b.price);
     if (sort === "high")   xs.sort((a,b) => b.price - a.price);
     return xs;
-  }, [cat, sort, query, extraItems]);
+  }, [cat, sort, query, extraItems, campus]);
 
   return (
     <section className="cw-section" style={{ padding: mobile ? "24px 16px 40px" : "32px 48px 64px", maxWidth: 1440, margin: "0 auto" }}>
@@ -26,7 +31,6 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
         eyebrow="Marketplace"
         title={<>What one student <span style={{ fontStyle: "italic", color: accent }}>doesn't need</span>, another one does.</>}
         meta={`${items.length} items · near your campus`}
-        right={<Btn variant="secondary" size="sm" icon="sliders-horizontal">Filters</Btn>}
       />
 
       <div style={{ marginTop: mobile ? 16 : 28 }}>
@@ -57,7 +61,7 @@ function Marketplace({ query, onChat, onItem, accent, extraItems = [] }) {
           marginTop: 8, flexShrink: 0,
         }}>
           <option value="relevance">Relevance</option>
-          <option value="recent">Últimos listados</option>
+          <option value="recent">Latest listings</option>
           <option value="low">Price: low to high</option>
           <option value="high">Price: high to low</option>
         </select>
@@ -120,7 +124,7 @@ function MarketCard({ item, onChat, onItem, accent, mobile }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, marginTop: "auto", paddingTop: mobile ? 8 : 12, borderTop: "1px solid var(--hairline)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
             <span style={{ width: 20, height: 20, borderRadius: 999, background: "var(--bg-2)", color: "var(--fg-1)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, flexShrink: 0 }}>
-              {item.seller.split(" ").map(n => n[0]).join("")}
+              {item.seller.split(" ").map(n => n[0].toUpperCase()).join("")}
             </span>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: mobile ? 10 : 11, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.seller}</div>
@@ -194,7 +198,7 @@ function ServiceCard({ svc, onChat, accent }) {
             width: 44, height: 44, borderRadius: 8, background: accentBg, color: accentColor,
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 22, letterSpacing: "-0.04em", flexShrink: 0,
-          }}>{svc.provider.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
+          }}>{svc.provider.split(" ").map(n => n[0].toUpperCase()).join("").slice(0,2)}</span>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <h4 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 15, color: "var(--fg-1)", letterSpacing: "-0.005em" }}>{svc.name}</h4>

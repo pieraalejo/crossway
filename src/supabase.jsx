@@ -30,7 +30,9 @@ function _dbToItem(row) {
     program:  "ESB · Reutlingen",
     verified: false,
     fromDB:   true,
-    dist:     "Campus",
+    dist:     row.location || "Campus",
+    location: row.location || "Campus",
+    campus:   row.campus || "esb-reutlingen",
     img:      row.image_url ? `url(${row.image_url})` : (_IMG[row.category] || _IMG.Other),
     emoji:    row.image_url ? null : (_EMO[row.category] || "📦"),
     desc:     row.description || "—",
@@ -52,7 +54,7 @@ async function supaFetchListings() {
   return (data || []).map(_dbToItem);
 }
 
-async function supaInsertListing({ title, price, category, condition, description, sellerName, imageFile }) {
+async function supaInsertListing({ title, price, category, condition, description, sellerName, location, campus, imageFile }) {
   await supaEnsureAuth();
   const { data: { user } } = await _supa.auth.getUser();
 
@@ -80,6 +82,8 @@ async function supaInsertListing({ title, price, category, condition, descriptio
     description,
     seller_name: sellerName || "Student",
     image_url:   imageUrl,
+    location:    location || "Campus",
+    campus:      campus || "esb-reutlingen",
   }).select().single();
 
   if (error) { console.error("insert:", error); return null; }

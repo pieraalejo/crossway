@@ -51,7 +51,7 @@ function ChatOverlay({ open, onClose, initial, accent }) {
               width: 36, height: 36, borderRadius: 999, background: c.color,
               flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center",
               fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, letterSpacing: "-0.02em", color: "var(--carbon-black)",
-            }}>{c.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
+            }}>{c.from.split(" ").map(n => n[0].toUpperCase()).join("").slice(0,2)}</span>
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 13, fontWeight: 600, color: "var(--fg-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.from}</span>
@@ -80,7 +80,7 @@ function ChatOverlay({ open, onClose, initial, accent }) {
             width: 36, height: 36, borderRadius: 999, background: current.color,
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 16, color: "var(--carbon-black)", flexShrink: 0,
-          }}>{current.from.split(" ").map(n => n[0]).join("").slice(0,2)}</span>
+          }}>{current.from.split(" ").map(n => n[0].toUpperCase()).join("").slice(0,2)}</span>
           <div style={{ minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>{current.from}</span>
@@ -220,7 +220,7 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
 
             <div style={{ background: "var(--bg-1)", border: "1px solid var(--hairline)", borderRadius: 10, padding: 18, display: "flex", alignItems: "center", gap: 14 }}>
               <span style={{ width: 48, height: 48, borderRadius: 999, background: "var(--bg-2)", color: "var(--fg-1)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 20 }}>
-                {item.seller.split(" ").map(n => n[0]).join("")}
+                {item.seller.split(" ").map(n => n[0].toUpperCase()).join("")}
               </span>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -230,7 +230,12 @@ function ItemDrawer({ item, onClose, onChat, accent }) {
                 <div style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 4 }}>{item.program}</div>
                 {!item.fromDB && (
                   <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>
-                    <Stars value={4.8} size={10} /> 4.8 · 12 transactions · {item.dist}
+                    <Stars value={4.8} size={10} /> 4.8 · 12 transactions
+                  </div>
+                )}
+                {(item.location || item.dist) && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>
+                    <Icon name="map-pin" size={11} />{item.location || item.dist}
                   </div>
                 )}
               </div>
@@ -293,6 +298,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   const [category, setCategory] = useState("Other");
   const [desc, setDesc] = useState("");
   const [sellerName, setSellerName] = useState("");
+  const [location, setLocation] = useState("");
   const [images, setImages] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef(null);
@@ -310,7 +316,7 @@ function PostAdModal({ open, onClose, accent, onPost }) {
     if (!open) {
       images.forEach(i => URL.revokeObjectURL(i.url));
       setStep(0); setDone(false); setPublishing(false);
-      setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); setSellerName(""); setImages([]);
+      setTitle(""); setPrice(""); setCondition("Good"); setCategory("Other"); setDesc(""); setSellerName(""); setLocation(""); setImages([]);
     }
   }, [open]);
 
@@ -334,8 +340,10 @@ function PostAdModal({ open, onClose, accent, onPost }) {
       condition,
       seller:    sellerName.trim() || "Student",
       program:   "ESB · Reutlingen",
-      verified:  true,
-      dist:      "Campus",
+      verified:  false,
+      fromDB:    false,
+      dist:      location.trim() || "Campus",
+      location:  location.trim() || "Campus",
       img:       images.length > 0 ? `url(${images[0].url})` : (IMG_MAP[category] || IMG_MAP.Other),
       emoji:     images.length > 0 ? null : (EMOJI_MAP[category] || "📦"),
       desc:      desc.trim() || "—",
@@ -417,8 +425,11 @@ function PostAdModal({ open, onClose, accent, onPost }) {
                   </select>
                 </Field>
               </div>
+              <Field label="Pickup location">
+                <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Wohnheim 4, Campus main entrance…" />
+              </Field>
               <Field label="Description">
-                <textarea rows={4} value={desc} onChange={e => setDesc(e.target.value)} placeholder="Descripción del objeto, dónde retirarlo, disponibilidad…" />
+                <textarea rows={3} value={desc} onChange={e => setDesc(e.target.value)} placeholder="Describe the item, availability…" />
               </Field>
               <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: "none" }}
                 onChange={e => { handleFiles(e.target.files); e.target.value = ""; }} />
