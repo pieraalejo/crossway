@@ -288,6 +288,7 @@ const EMOJI_MAP = { Furniture: "🪑", Books: "📕", Electronics: "🖥", Trans
 const IMG_MAP   = { Furniture: "linear-gradient(135deg,#c9b89a,#8a7456)", Books: "linear-gradient(135deg,#2a3b5c,#0e1a2e)", Electronics: "linear-gradient(135deg,#3a3a3a,#1a1a1a)", Transport: "linear-gradient(135deg,#5a7d52,#2d4127)", Kitchen: "linear-gradient(135deg,#8a8a8a,#4a4a4a)", Notes: "linear-gradient(135deg,#c9dc5e,#6e7a2b)", Sports: "linear-gradient(135deg,#c75050,#6e2424)", Other: "linear-gradient(135deg,#c9dc5e,#6e7a2b)" };
 
 function PostAdModal({ open, onClose, accent, onPost }) {
+  const mobile = useMobile();
   const [step, setStep] = useState(0);
   const [type, setType] = useState("item");
   const [done, setDone] = useState(false);
@@ -356,7 +357,13 @@ function PostAdModal({ open, onClose, accent, onPost }) {
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", zIndex: 90, animation: "cwfade 220ms var(--ease-out)" }} />
-      <div role="dialog" style={{
+      <div role="dialog" style={mobile ? {
+        position: "fixed", inset: 0, zIndex: 91,
+        background: "var(--bg-0)", overflow: "auto",
+        display: "flex", flexDirection: "column",
+        animation: "cwslide 280ms var(--ease-out)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+      } : {
         position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
         width: 560, maxWidth: "92vw", maxHeight: "85vh", overflow: "auto",
         background: "var(--bg-0)", border: "1px solid var(--hairline-strong)", borderRadius: 12,
@@ -375,10 +382,10 @@ function PostAdModal({ open, onClose, accent, onPost }) {
             <div style={{ textAlign: "center", padding: "32px 20px" }}>
               <div style={{ width: 64, height: 64, margin: "0 auto 20px", borderRadius: 999, background: "var(--accent-tint-md)", boxShadow: "inset 0 0 0 1px var(--accent-tint-edge)", color: accent, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="check" size={28} stroke={1.8} /></div>
               <div style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: 32, letterSpacing: "-0.02em", color: "var(--fg-1)" }}>Posted.</div>
-              <p style={{ margin: "12px auto 0", maxWidth: "32ch", fontSize: 14, color: "var(--fg-2)" }}>Tu publicación ya es visible para <span style={{ color: accent }}>2,847</span> estudiantes verificados en tu campus.</p>
+              <p style={{ margin: "12px auto 0", maxWidth: "32ch", fontSize: 14, color: "var(--fg-2)" }}>Your listing is now visible to <span style={{ color: accent }}>2,847</span> verified students on your campus.</p>
               <div style={{ marginTop: 28, display: "flex", gap: 8, justifyContent: "center" }}>
-                <Btn variant="secondary" size="md" onClick={onClose}>Cerrar</Btn>
-                <Btn variant="primary" size="md" iconRight="arrow-right" onClick={onClose}>Ver mi publicación</Btn>
+                <Btn variant="secondary" size="md" onClick={onClose}>Close</Btn>
+                <Btn variant="primary" size="md" iconRight="arrow-right" onClick={onClose}>View my listing</Btn>
               </div>
             </div>
           ) : step === 0 ? (
@@ -404,13 +411,13 @@ function PostAdModal({ open, onClose, accent, onPost }) {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <Field label="Tu nombre">
-                <input value={sellerName} onChange={e => setSellerName(e.target.value)} placeholder="Ej: Ana, Mateo, Julia…" />
+              <Field label="Your name">
+                <input value={sellerName} onChange={e => setSellerName(e.target.value)} placeholder="e.g. Ana, Mateo, Julia…" />
               </Field>
               <Field label="Title">
-                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ej: Silla IKEA, escritorio, bicicleta…" />
+                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. IKEA desk, bicycle, textbook…" />
               </Field>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr 1fr", gap: 12 }}>
                 <Field label="Price (€)">
                   <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9.,]/g, "").replace(",", "."))} placeholder="0" type="text" inputMode="decimal" />
                 </Field>
@@ -471,13 +478,13 @@ function PostAdModal({ open, onClose, accent, onPost }) {
                     transition: "all 140ms var(--ease-out)",
                   }}>
                   <Icon name="image-plus" size={22} />
-                  <div style={{ marginTop: 8, fontWeight: 500 }}>Arrastrá fotos o hacé click para subir</div>
-                  <div style={{ marginTop: 4, fontSize: 11, color: "var(--fg-3)" }}>JPG, PNG, WEBP · múltiples imágenes · también desde el celular</div>
+                  <div style={{ marginTop: 8, fontWeight: 500 }}>Drag photos or click to upload</div>
+                  <div style={{ marginTop: 4, fontSize: 11, color: "var(--fg-3)" }}>JPG, PNG, WEBP · multiple images · works from mobile</div>
                 </div>
               )}
               <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 4 }}>
                 <Btn variant="ghost" size="md" icon="arrow-left" onClick={() => setStep(0)}>Back</Btn>
-                <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim() || publishing}>{publishing ? "Publicando…" : "Publish"}</Btn>
+                <Btn variant="primary" size="md" iconRight="check" onClick={publish} disabled={!title.trim() || publishing}>{publishing ? "Publishing…" : "Publish"}</Btn>
               </div>
             </div>
           )}

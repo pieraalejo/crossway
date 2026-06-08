@@ -17,6 +17,7 @@ const DEFAULT_CAMPUS = "esb-reutlingen";
 
 function App() {
   const accent = ACCENT;
+  const mobile = useMobile();
 
   const [tab, setTab] = useState("home");
   const [query, setQuery] = useState("");
@@ -91,7 +92,7 @@ function App() {
 
       {notif && (
         <div style={{
-          position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)",
+          position: "fixed", bottom: mobile ? 88 : 28, left: "50%", transform: "translateX(-50%)",
           background: "var(--bg-1)", border: "1px solid var(--hairline-strong)", borderRadius: 10,
           padding: "12px 18px", color: "var(--fg-1)", fontSize: 13, zIndex: 200,
           boxShadow: "var(--shadow-md)", display: "inline-flex", alignItems: "center", gap: 10,
@@ -291,7 +292,7 @@ function FeaturedSections({ accent, setTab, onChat, onItem, attending, onAttend,
         background: "transparent", borderRadius: 10, cursor: "pointer",
         fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--fg-2)",
         display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
-      }}>Ver todos · {label} <Icon name="arrow-right" size={14} /></button>
+      }}>See all · {label} <Icon name="arrow-right" size={14} /></button>
     </div>
   ) : null;
 
